@@ -1,0 +1,6 @@
+{
+  "name": "Azkar & Dua",
+  "description": "Islamic Azkar, Dua, 99 Names of Allah, and Tasbih counter with Amharic translations and 5 themes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
