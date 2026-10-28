@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../models/azkar_models.dart';
+export '../models/azkar_models.dart';
 
 class AzkarProvider extends ChangeNotifier {
   List<AzkarCategory> _categories = [];

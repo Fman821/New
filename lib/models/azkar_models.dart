@@ -121,41 +121,14 @@ class AllahName {
 }
 
 enum AppThemeMode {
-  sacredLight,
-  midnightOttoman,
-  glassmorphism3D,
-  masjidArchitecture,
-  darkEmeraldNeon,
-}
+  sacredLight('የቀን ብርሃን (Sacred Light)', 'ነጭና ወርቃማ ለስላሳ የቀን እይታ'),
+  midnightOttoman('የኦቶማን ሰማያዊ (Midnight Ottoman)', 'ጥልቅ ሰማያዊ ከመዳብና ሮዝ ወርቅ ጋር'),
+  glassmorphism3D('ዘመናዊ ግላስ (Glassmorphism)', 'የብርጭቆ ዲዛይን በኤመራልድና ወርቅ ፍንጣቂ'),
+  masjidArchitecture('የመስጊድ ቅስት (Masjid Arch)', 'የመስጊዶች ቅስት አርክቴክቸርና የተረጋጋ አረንጓዴ'),
+  darkEmeraldNeon('ኤመራልድ ኒዮን (Dark Emerald)', 'ጥቁር ኤመራልድ ከሚያበራ ኒዮን ወርቅ ጋር');
 
-extension AppThemeModeExt on AppThemeMode {
-  String get titleAm {
-    switch (this) {
-      case AppThemeMode.sacredLight:
-        return 'የቀን ብርሃን (Sacred Light)';
-      case AppThemeMode.midnightOttoman:
-        return 'የኦቶማን ሰማያዊ (Midnight Ottoman)';
-      case AppThemeMode.glassmorphism3D:
-        return 'ዘመናዊ ግላስ (Glassmorphism)';
-      case AppThemeMode.masjidArchitecture:
-        return 'የመስጊድ ቅስት (Masjid Arch)';
-      case AppThemeMode.darkEmeraldNeon:
-        return 'ኤመራልድ ኒዮን (Dark Emerald)';
-    }
-  }
+  final String titleAm;
+  final String descAm;
 
-  String get descAm {
-    switch (this) {
-      case AppThemeMode.sacredLight:
-        return 'ነጭና ወርቃማ ለስላሳ የቀን እይታ';
-      case AppThemeMode.midnightOttoman:
-        return 'ጥልቅ ሰማያዊ ከመዳብና ሮዝ ወርቅ ጋር';
-      case AppThemeMode.glassmorphism3D:
-        return 'የብርጭቆ ዲዛይን በኤመራልድና ወርቅ ፍንጣቂ';
-      case AppThemeMode.masjidArchitecture:
-        return 'የመስጊዶች ቅስት አርክቴክቸርና የተረጋጋ አረንጓዴ';
-      case AppThemeMode.darkEmeraldNeon:
-        return 'ጥቁር ኤመራልድ ከሚያበራ ኒዮን ወርቅ ጋር';
-    }
-  }
+  const AppThemeMode(this.titleAm, this.descAm);
 }
