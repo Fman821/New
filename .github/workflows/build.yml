@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository code
+      # Step 1: Check out repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -37,20 +37,20 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
-      # Step 4: Verify Flutter and system environment
-      - name: Flutter Doctor
-        run: flutter doctor -v
+      # Step 4: Ensure complete Android host configuration exists
+      - name: Configure Android Platform Files
+        run: flutter create . --platforms=android --org com.aistudio.nurazkar
 
       # Step 5: Install project dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      # Step 6: Analyze code for warnings (non-blocking, won't break the build pipeline)
+      # Step 6: Analyze code (non-fatal, will not break the build pipeline)
       - name: Analyze Project Code
         run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
         continue-on-error: true
 
-      # Step 7: Build Android APK
+      # Step 7: Build Android Release APK
       - name: Build Release APK
         run: flutter build apk --release
 

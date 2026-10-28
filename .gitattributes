@@ -8,3 +8,4 @@ gradle/** linguist-vendored=true
 gradle.properties linguist-vendored=true
 settings.gradle.kts linguist-vendored=true
 build.gradle.kts linguist-vendored=true
+android/** linguist-vendored=true
