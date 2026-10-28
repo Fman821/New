@@ -59,7 +59,7 @@ class _NamesOfAllahScreenState extends State<NamesOfAllahScreen> {
                     children: [
                       CircleAvatar(
                         radius: 12,
-                        backgroundColor: colors.goldAccent.withOpacity(0.2),
+                        backgroundColor: colors.goldAccent.withValues(alpha: 0.2),
                         child: Text('${item.n}', style: TextStyle(fontSize: 10, color: colors.goldAccent, fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(height: 4),

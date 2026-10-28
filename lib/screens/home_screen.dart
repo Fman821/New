@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: colors.goldAccent.withOpacity(0.15),
+                        color: colors.goldAccent.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text('የእለቱ ማስታወሻ', style: TextStyle(color: colors.goldAccent, fontSize: 11)),
@@ -84,7 +84,7 @@ class HomeScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: colors.goldAccent.withOpacity(0.15),
+                backgroundColor: colors.goldAccent.withValues(alpha: 0.15),
                 child: Icon(Icons.wb_sunny, color: colors.goldAccent),
               ),
               title: Text(cat.title, style: TextStyle(color: colors.text, fontWeight: FontWeight.bold)),

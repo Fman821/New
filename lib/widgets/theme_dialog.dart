@@ -17,6 +17,7 @@ void showThemeDialog(BuildContext context) {
             return RadioListTile<AppThemeMode>(
               value: mode,
               groupValue: provider.currentTheme,
+              selected: isSelected,
               title: Text(mode.titleAm, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               subtitle: Text(mode.descAm, style: const TextStyle(fontSize: 12)),
               onChanged: (val) {

@@ -30,7 +30,7 @@ class AzkarCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDone ? colors.goldAccent : colors.border.withOpacity(0.5),
+            color: isDone ? colors.goldAccent : colors.border.withValues(alpha: 0.5),
             width: isDone ? 1.5 : 1,
           ),
         ),
@@ -43,7 +43,7 @@ class AzkarCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: colors.goldAccent.withOpacity(0.15),
+                    color: colors.goldAccent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -134,7 +134,7 @@ class AzkarCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      color: isDone ? colors.goldAccent : colors.goldAccent.withOpacity(0.15),
+                      color: isDone ? colors.goldAccent : colors.goldAccent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(

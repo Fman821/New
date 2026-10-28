@@ -98,7 +98,7 @@ class ModernTasbihWidget extends StatelessWidget {
                 painter: _TasbihPainter(
                   progress: provider.tasbihCount / provider.tasbihTarget,
                   activeColor: colors.goldAccent,
-                  trackColor: colors.border.withOpacity(0.3),
+                  trackColor: colors.border.withValues(alpha: 0.3),
                 ),
                 child: Center(
                   child: Container(
@@ -109,7 +109,7 @@ class ModernTasbihWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -155,7 +155,7 @@ class ModernTasbihWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: colors.border.withOpacity(0.4)),
+              border: Border.all(color: colors.border.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -169,7 +169,7 @@ class ModernTasbihWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                Container(height: 30, width: 1, color: colors.border.withOpacity(0.5)),
+                Container(height: 30, width: 1, color: colors.border.withValues(alpha: 0.5)),
                 Column(
                   children: [
                     Text('አጠቃላይ ድምር', style: TextStyle(color: colors.subtext, fontSize: 12)),

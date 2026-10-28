@@ -12,12 +12,12 @@ class IslamicGeometricDivider extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Expanded(child: Divider(color: color.withOpacity(0.3), thickness: 1)),
+            Expanded(child: Divider(color: color.withValues(alpha: 0.3), thickness: 1)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Icon(Icons.star, size: 10, color: color),
             ),
-            Expanded(child: Divider(color: color.withOpacity(0.3), thickness: 1)),
+            Expanded(child: Divider(color: color.withValues(alpha: 0.3), thickness: 1)),
           ],
         ),
       ),
