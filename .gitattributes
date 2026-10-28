@@ -1,0 +1,10 @@
+# Enforce GitHub language detection as 100% Dart
+*.dart linguist-detectable=true
+*.kt linguist-vendored=true
+*.kts linguist-vendored=true
+*.xml linguist-vendored=true
+app/** linguist-vendored=true
+gradle/** linguist-vendored=true
+gradle.properties linguist-vendored=true
+settings.gradle.kts linguist-vendored=true
+build.gradle.kts linguist-vendored=true
