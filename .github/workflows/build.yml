@@ -37,24 +37,31 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
-      # Step 4: Ensure complete Android host configuration exists
-      - name: Configure Android Platform Files
-        run: flutter create . --platforms=android --org com.aistudio.nurazkar
+      # Step 4: Generate clean, matching Android platform files for this Flutter SDK
+      - name: Generate Android Platform Files
+        run: |
+          rm -rf android
+          flutter create . --platforms=android --org com.aistudio.nurazkar
 
-      # Step 5: Install project dependencies
+      # Step 5: Add permissions to AndroidManifest.xml
+      - name: Configure Android Permissions
+        run: |
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>' android/app/src/main/AndroidManifest.xml
+
+      # Step 6: Install project dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      # Step 6: Analyze code (non-fatal, will not break the build pipeline)
+      # Step 7: Analyze code (non-fatal, will not break the build pipeline)
       - name: Analyze Project Code
         run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
         continue-on-error: true
 
-      # Step 7: Build Android Release APK
+      # Step 8: Build Android Release APK
       - name: Build Release APK
         run: flutter build apk --release
 
-      # Step 8: Upload the APK artifact for download from Actions tab
+      # Step 9: Upload the APK artifact for download from Actions tab
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
