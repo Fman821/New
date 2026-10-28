@@ -1,0 +1,62 @@
+name: Flutter Build & Test
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  build:
+    name: Build Flutter APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java (required by Android Gradle toolchain)
+      - name: Set up Java Development Kit (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      # Step 3: Set up Flutter SDK
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+
+      # Step 4: Verify Flutter and system environment
+      - name: Flutter Doctor
+        run: flutter doctor -v
+
+      # Step 5: Install project dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Step 6: Analyze code for potential errors
+      - name: Analyze Project Code
+        run: flutter analyze --no-fatal-infos
+
+      # Step 7: Build Android APK
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      # Step 8: Upload the APK artifact for download from Actions tab
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nur-azkar-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
