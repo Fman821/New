@@ -668,7 +668,7 @@ private fun GuidedAzkarView(
                                             if (item.source.isNotBlank()) {
                                                 append("\n\nምንጭ: ${item.source}")
                                             }
-                                            append("\n\n[Nur Islamic Lifestyle - ኑሩል እስላም]")
+                                            append("\n\n[Amharic Azkar - አማርኛ አዝካር]")
                                         }
                                         putExtra(Intent.EXTRA_TEXT, shareBody)
                                     }

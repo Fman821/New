@@ -1,6 +1,6 @@
 {
-  "name": "Azkar & Dua",
-  "description": "Islamic Azkar, Dua, 99 Names of Allah, and Tasbih counter with Amharic translations and 5 themes.",
+  "name": "Amharic Azkar",
+  "description": "Daily Remembrance, Peaceful Life. Authentic Morning and Evening Azkar with readable Amharic translations, repetition counters, and progress tracking.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

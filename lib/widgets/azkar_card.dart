@@ -86,7 +86,7 @@ class AzkarCard extends StatelessWidget {
                   icon: Icon(Icons.share, color: colors.subtext, size: 20),
                   onPressed: () {
                     Share.share(
-                      '${item.title}\n\n${item.ar}\n\nትርጉም:\n${item.am}\n\n[Nur Azkar - ኑሩል አዝካር]',
+                      '${item.title}\n\n${item.ar}\n\nትርጉም:\n${item.am}\n\n[Amharic Azkar - አማርኛ አዝካር]',
                     );
                   },
                 ),

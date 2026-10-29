@@ -381,7 +381,7 @@ private fun SurahReaderView(
                                     append("${v.numberInSurah}. ${v.arabic}\n")
                                     append("${v.amharicTranslation}\n\n")
                                 }
-                                append("[Nur Islamic Lifestyle - ኑሩል እስላም]")
+                                append("[Amharic Azkar - አማርኛ አዝካር]")
                             }
                             putExtra(Intent.EXTRA_TEXT, content)
                         }

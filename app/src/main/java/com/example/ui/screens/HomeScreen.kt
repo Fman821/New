@@ -157,14 +157,14 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Nur Islamic Lifestyle",
+                                text = "Amharic Azkar",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 letterSpacing = 0.3.sp
                             )
                             Text(
-                                text = "አሰላሙ ዐለይኩም ወረሕመቱላህ",
+                                text = "አማርኛ አዝካር • ዕለታዊ ዝክር፣ ሰላማዊ ሕይወት",
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = islamicColors.arabicCalligraphyColor
@@ -300,7 +300,7 @@ fun HomeScreen(
                             «አስታውሱኝ አስታውሳችኋለሁና፤ ለእኔም አመስግኑ፤ አትካዱኝም፡፡»
                             [ሱረቱል አል-በቀራህ • 152]
                             
-                            (Nur Islamic Lifestyle - ኑሩል እስላም)
+                            (Amharic Azkar - አማርኛ አዝካር)
                         """.trimIndent()
                         putExtra(Intent.EXTRA_TEXT, text)
                     }

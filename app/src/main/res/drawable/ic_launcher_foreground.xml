@@ -1,47 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Outer delicate ring -->
-    <path
-        android:pathData="M 54,26 A 28,28 0 1 0 54,82 A 28,28 0 1 0 54,26 Z"
-        android:strokeWidth="1.2"
-        android:strokeColor="#66E5C158"
-        android:fillColor="#00000000" />
-
-    <!-- Golden Islamic Crescent -->
-    <path
-        android:pathData="M 60,34 C 47,35 37,45 37,57 C 37,70 48,79 61,78 C 52,75 46,67 46,57 C 46,47 52,38 60,34 Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:startX="37"
-                android:startY="34"
-                android:endX="61"
-                android:endY="78"
-                android:type="linear">
-                <item android:offset="0.0" android:color="#FFE885" />
-                <item android:offset="0.5" android:color="#E5C158" />
-                <item android:offset="1.0" android:color="#B88A22" />
-            </gradient>
-        </aapt:attr>
-    </path>
-
-    <!-- Eight-pointed Star inside the crescent -->
-    <path
-        android:pathData="M 65,47 L 66.5,50.5 L 70,52 L 66.5,53.5 L 65,57 L 63.5,53.5 L 60,52 L 63.5,50.5 Z"
-        android:fillColor="#FFE885" />
-
-    <!-- Little Tasbih bead accent below -->
-    <path
-        android:pathData="M 54,73 A 2.2,2.2 0 1 0 54,77.4 A 2.2,2.2 0 1 0 54,73 Z"
-        android:fillColor="#FFE885" />
-    <path
-        android:pathData="M 48,70 A 1.8,1.8 0 1 0 48,73.6 A 1.8,1.8 0 1 0 48,70 Z"
-        android:fillColor="#D8A938" />
-    <path
-        android:pathData="M 60,70 A 1.8,1.8 0 1 0 60,73.6 A 1.8,1.8 0 1 0 60,70 Z"
-        android:fillColor="#D8A938" />
-</vector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="66dp"
+        android:height="66dp"
+        android:drawable="@drawable/ic_app_logo"
+        android:gravity="center" />
+</layer-list>

@@ -9,7 +9,7 @@ import 'azkar_list_screen.dart';
 import 'duas_screen.dart';
 import 'names_screen.dart';
 
-/// Canonical, production-quality Home Page for Nur Islamic Lifestyle.
+/// Canonical, production-quality Home Page for Amharic Azkar (አማርኛ አዝካር).
 /// Source of Truth: Morning Azkar and Evening Azkar are the TWO MOST IMPORTANT
 /// FEATURES, followed by the Daily Progress component, with the Daily Verse and
 /// lifestyle tools placed in a subordinate secondary position.
@@ -267,7 +267,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Nur Islamic Lifestyle',
+                    'Amharic Azkar',
                     style: TextStyle(
                       color: colors.text,
                       fontSize: 15,
@@ -276,9 +276,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Text(
-                    'አሰላሙ ዐለይኩም ወረሕመቱላህ',
+                    'አማርኛ አዝካር • ዕለታዊ ዝክር፣ ሰላማዊ ሕይወት',
                     style: TextStyle(
-                      color: const Color(0xFF0E5A3E),
+                      color: const Color(0xFF063B2D),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),

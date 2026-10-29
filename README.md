@@ -1,6 +1,7 @@
-# Nur: Islamic Azkar, Dua & Tasbih (ኑሩል አዝካር)
+# Amharic Azkar (አማርኛ አዝካር)
+> **Daily Remembrance, Peaceful Life. • «ዕለታዊ ዝክር፣ ሰላማዊ ሕይወት»**
 
-A modern, beautifully crafted Android application built with **Kotlin** and **Jetpack Compose**, featuring Islamic Azkar, Quranic & Prophetic Duas, the 99 Names of Allah (Asmaul Husna), and an interactive digital Tasbih counter. The app includes complete Amharic translations and 5 distinctive visual theme concepts.
+A modern, beautifully crafted Android application built with **Kotlin** and **Jetpack Compose**, focusing primarily on authentic **Morning Azkar (የጥዋት አዝካር)** and **Evening Azkar (የማታ አዝካር)** with clear Amharic translations, repetition counters, daily progress tracking, Quranic & Prophetic Duas, the 99 Names of Allah, and an interactive Tasbih counter.
 
 ---
 

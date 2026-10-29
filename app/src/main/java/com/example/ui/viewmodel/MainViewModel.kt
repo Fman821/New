@@ -34,7 +34,8 @@ enum class AppTab(val titleAm: String) {
     PRAYER_QIBLA("ሰላትና ቂብላ"),
     TASBIH("ተስቢሕ"),
     NAMES("99 ስሞች"),
-    FAVORITES("ተወዳጆች")
+    FAVORITES("ተወዳጆች"),
+    ABOUT("ስለ መተግበሪያው")
 }
 
 /**

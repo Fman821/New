@@ -57,19 +57,19 @@ private val SacredLightColorScheme = lightColorScheme(
     outlineVariant = Color(0xFFF0EBE1)
 )
 
-// 2. Sacred Night M3 Scheme (Deep Emerald & Forest Green)
+// 2. Sacred Night M3 Scheme (Deep Emerald & Dark Background)
 private val SacredNightColorScheme = darkColorScheme(
     primary = ChampagneGold,
-    onPrimary = DeepEmerald,
+    onPrimary = DarkBackground,
     secondary = SoftGold,
-    onSecondary = DeepEmerald,
-    background = DeepEmerald,
-    onBackground = Color(0xFFFAF7F0),
-    surface = DarkForestGreen,
-    onSurface = Color(0xFFFAF7F0),
+    onSecondary = DarkBackground,
+    background = DarkBackground,
+    onBackground = WarmCream,
+    surface = DeepEmerald,
+    onSurface = WarmCream,
     surfaceVariant = DarkSurfaceVariant,
     onSurfaceVariant = Color(0xFFA6BAAF),
-    outline = Color(0x33F2D99A),
+    outline = Color(0x33D9B66F),
     outlineVariant = Color(0x22FFFFFF)
 )
 

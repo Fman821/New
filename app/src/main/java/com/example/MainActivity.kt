@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.Palette
@@ -53,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.FontSizeDialog
 import com.example.ui.components.ModernTasbihView
 import com.example.ui.components.ThemeSelectorDialog
+import com.example.ui.screens.AboutScreen
 import com.example.ui.screens.AzkarCategoriesScreen
 import com.example.ui.screens.AzkarListScreen
 import com.example.ui.screens.AzkarReaderScreen
@@ -108,13 +110,13 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     title = {
                         Column {
                             Text(
-                                text = "Nur Islamic Lifestyle",
+                                text = "Amharic Azkar",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "ኑሩል እስላም • ${uiState.currentTheme.titleAm}",
+                                text = "አማርኛ አዝካር • ${uiState.currentTheme.titleAm}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = islamicColors.goldAccent,
                                 fontSize = 11.sp
@@ -122,7 +124,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         }
                     },
                     navigationIcon = {
-                        if (uiState.currentTab == AppTab.NAMES || uiState.currentTab == AppTab.FAVORITES) {
+                        if (uiState.currentTab == AppTab.NAMES || uiState.currentTab == AppTab.FAVORITES || uiState.currentTab == AppTab.ABOUT) {
                             IconButton(onClick = { viewModel.setTab(AppTab.HOME) }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -154,6 +156,18 @@ fun MainAppScreen(viewModel: MainViewModel) {
                                 imageVector = Icons.Default.Star,
                                 contentDescription = "Favorites",
                                 tint = if (uiState.currentTab == AppTab.FAVORITES) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        // About screen button
+                        IconButton(
+                            onClick = { viewModel.setTab(AppTab.ABOUT) },
+                            modifier = Modifier.testTag("about_app_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "About Amharic Azkar",
+                                tint = if (uiState.currentTab == AppTab.ABOUT) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
@@ -361,6 +375,11 @@ fun MainAppScreen(viewModel: MainViewModel) {
                                 onResetCount = { id -> viewModel.resetItemCount(id) },
                                 onToggleFavorite = { id -> viewModel.toggleFavorite(id) },
                                 onToggleAudio = { url -> viewModel.toggleAudio(url) }
+                            )
+                        }
+                        AppTab.ABOUT -> {
+                            AboutScreen(
+                                onBack = { viewModel.setTab(AppTab.HOME) }
                             )
                         }
                     }

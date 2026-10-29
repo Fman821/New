@@ -15,13 +15,13 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (_) => AzkarProvider(),
-      child: const NurAzkarApp(),
+      child: const AmharicAzkarApp(),
     ),
   );
 }
 
-class NurAzkarApp extends StatelessWidget {
-  const NurAzkarApp({super.key});
+class AmharicAzkarApp extends StatelessWidget {
+  const AmharicAzkarApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class NurAzkarApp extends StatelessWidget {
     final themeColors = IslamicThemeColors.fromMode(provider.currentTheme);
 
     return MaterialApp(
-      title: 'Nur Azkar',
+      title: 'Amharic Azkar',
       debugShowCheckedModeBanner: false,
       theme: themeColors.toThemeData(),
       home: const MainNavigationScreen(),
