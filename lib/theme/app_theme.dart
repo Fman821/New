@@ -23,8 +23,13 @@ class IslamicThemeColors {
   });
 
   Color get background => bg;
+  Color get backgroundColor => bg;
   Color get primaryText => text;
+  Color get textColor => text;
   Color get subtextColor => subtext;
+  Color get secondaryText => subtext;
+  Color get gold => goldAccent;
+  Color get cardColor => surface;
 
   static const sacredLight = IslamicThemeColors(
     bg: Color(0xFFF9F6F0),

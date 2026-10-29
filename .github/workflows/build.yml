@@ -44,28 +44,50 @@ jobs:
           flutter create . --platforms=android --org com.aistudio.nurazkar
           echo "android.newDsl=false" >> android/gradle.properties
 
-      # Step 5: Add permissions to AndroidManifest.xml
-      - name: Configure Android Permissions
+      # Step 5: Configure Android App Name, Permissions, and Resources
+      - name: Configure Android App Name and Permissions
         run: |
+          # 1. Add permissions
           sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>' android/app/src/main/AndroidManifest.xml
+          
+          # 2. Set Android Launcher Label to "Amharic Azkar"
+          sed -i 's/android:label="[^"]*"/android:label="Amharic Azkar"/g' android/app/src/main/AndroidManifest.xml
+          
+          # 3. Create strings.xml with app_name
+          mkdir -p android/app/src/main/res/values
+          cat << 'EOF' > android/app/src/main/res/values/strings.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">Amharic Azkar</string>
+          </resources>
+          EOF
+
+          # 4. Copy custom high-resolution Amharic Azkar icons into android resources
+          if [ -d "res_icons" ]; then
+            cp -rf res_icons/* android/app/src/main/res/
+          fi
 
       # Step 6: Install project dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      # Step 7: Analyze code (non-fatal, will not break the build pipeline)
+      # Step 7: Generate Launcher Icons using flutter_launcher_icons
+      - name: Generate Launcher Icons
+        run: dart run flutter_launcher_icons || flutter pub run flutter_launcher_icons || true
+
+      # Step 8: Analyze code (non-fatal, will not break the build pipeline)
       - name: Analyze Project Code
         run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
         continue-on-error: true
 
-      # Step 8: Build Android Release APK
+      # Step 9: Build Android Release APK
       - name: Build Release APK
         run: flutter build apk --release
 
-      # Step 9: Upload the APK artifact for download from Actions tab
+      # Step 10: Upload the APK artifact for download from Actions tab
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nur-azkar-release-apk
+          name: amharic-azkar-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14

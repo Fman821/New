@@ -73,7 +73,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Azkar & Dua • ኑሩል አዝካር', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text('Amharic Azkar • አማርኛ አዝካር', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             Text(
               (provider.currentTheme is AppThemeMode)
                   ? provider.currentTheme.titleAm
