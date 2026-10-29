@@ -1,13 +1,15 @@
 package com.example.ui.screens
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,23 +24,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.VolunteerActivism
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,8 +57,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -58,6 +71,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.AzkarCategory
+import com.example.data.model.AzkarSessionProgress
+import com.example.data.model.RecommendedPeriod
 import com.example.ui.components.IslamicEmblemMotif
 import com.example.ui.components.IslamicGeometricDivider
 import com.example.ui.theme.LocalIslamicColors
@@ -67,21 +82,27 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * Premium Redesigned Home Screen for Nur Islamic Lifestyle App.
- * Includes:
- * A. Elegant Header with Emblem, Greeting, and Hijri/Gregorian date.
- * B. Featured Daily Verse Card (Al-Baqarah 152) with verified Arabic text, translation, bookmark, and share.
- * C. 8 Quick Access Category Cards (Morning Azkar, Evening Azkar, Quran, Duas, 99 Names, Tasbih, Prayer Times, Qibla).
- * D. Daily Inspiration Card (Sahih al-Bukhari 6407).
- * E. Tasbih Preview Banner with quick count increment.
+ * Redesigned Home Screen elevating Morning Azkar & Evening Azkar
+ * into the TWO MOST IMPORTANT FEATURES of the entire app.
+ *
+ * Structure:
+ * 1. App Header with Emblem, Greeting, Date, and Theme Selector.
+ * 2. HERO SECTION: Two large, visually dominant Morning & Evening Azkar Cards (time-aware).
+ * 3. DAILY AZKAR PROGRESS COMPONENT: Real calculated progress bar and completion states.
+ * 4. SECONDARY FEATURES: Daily Verse, lifestyle tools (Quran, Duas, 99 Names, Prayer Times, Tasbih).
  */
 @Composable
 fun HomeScreen(
     categories: List<AzkarCategory>,
+    morningProgress: AzkarSessionProgress?,
+    eveningProgress: AzkarSessionProgress?,
+    recommendedPeriod: RecommendedPeriod,
     tasbihCount: Int,
     tasbihTarget: Int,
     isVerseBookmarked: Boolean,
     onToggleBookmarkVerse: () -> Unit,
+    onStartMorningAzkar: () -> Unit,
+    onStartEveningAzkar: () -> Unit,
     onCategoryClick: (AzkarCategory) -> Unit,
     onNavigateTab: (AppTab) -> Unit,
     onOpenPrayerTab: () -> Unit,
@@ -107,20 +128,20 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // =====================================================================
-        // A. ELEGANT HEADER
+        // 1. ELEGANT APP HEADER
         // =====================================================================
         item {
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 color = islamicColors.cardBg,
-                border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.6f)),
-                shadowElevation = if (islamicColors.isGlassmorphism) 0.dp else 2.dp,
+                border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.5f)),
+                shadowElevation = 2.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp),
+                        .padding(horizontal = 18.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -128,13 +149,12 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.weight(1f)
                     ) {
-                        // Islamic Emblem Motif
                         IslamicEmblemMotif(
                             primaryColor = islamicColors.arabicCalligraphyColor,
                             accentColor = islamicColors.goldAccent,
-                            modifier = Modifier.size(46.dp)
+                            modifier = Modifier.size(44.dp)
                         )
-                        Spacer(modifier = Modifier.width(14.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
                                 text = "Nur Islamic Lifestyle",
@@ -152,15 +172,17 @@ fun HomeScreen(
                             Text(
                                 text = currentDateStr,
                                 style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 11.sp
                             )
                         }
                     }
 
-                    // Theme selector button
                     IconButton(
                         onClick = onOpenThemeDialog,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .testTag("home_theme_button")
                     ) {
                         Icon(
                             imageVector = Icons.Default.Palette,
@@ -173,7 +195,97 @@ fun HomeScreen(
         }
 
         // =====================================================================
-        // B. FEATURED DAILY VERSE CARD (Al-Baqarah 152)
+        // 2. HERO SECTION: MORNING & EVENING AZKAR (PRIMARY VISUAL FOCUS)
+        // =====================================================================
+        item {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            tint = islamicColors.goldAccent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "ዕለታዊ አዝካር (Daily Azkar)",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+
+                    Text(
+                        text = "የቀኑ ዋና ተግባር",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = islamicColors.goldAccent,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Adaptive Hero layout: Side-by-side on wide screens, stacked on narrow mobile
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    val isWide = maxWidth >= 600.dp
+                    if (isWide) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            MorningAzkarHeroCard(
+                                progress = morningProgress,
+                                isRecommended = recommendedPeriod == RecommendedPeriod.MORNING,
+                                onStart = onStartMorningAzkar,
+                                modifier = Modifier.weight(1f)
+                            )
+                            EveningAzkarHeroCard(
+                                progress = eveningProgress,
+                                isRecommended = recommendedPeriod == RecommendedPeriod.EVENING,
+                                onStart = onStartEveningAzkar,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
+                        ) {
+                            MorningAzkarHeroCard(
+                                progress = morningProgress,
+                                isRecommended = recommendedPeriod == RecommendedPeriod.MORNING,
+                                onStart = onStartMorningAzkar,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            EveningAzkarHeroCard(
+                                progress = eveningProgress,
+                                isRecommended = recommendedPeriod == RecommendedPeriod.EVENING,
+                                onStart = onStartEveningAzkar,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // =====================================================================
+        // 3. DAILY AZKAR PROGRESS COMPONENT
+        // =====================================================================
+        item {
+            DailyAzkarProgressComponent(
+                morningProgress = morningProgress,
+                eveningProgress = eveningProgress
+            )
+        }
+
+        // =====================================================================
+        // 4. SECONDARY SECTION: FEATURED DAILY VERSE (Al-Baqarah 152)
         // =====================================================================
         item {
             FeaturedVerseCard(
@@ -198,7 +310,7 @@ fun HomeScreen(
         }
 
         // =====================================================================
-        // C. QUICK ACCESS CATEGORIES (8 Premium Cards)
+        // 5. SECONDARY SECTION: LIFESTYLE & KNOWLEDGE TOOLS
         // =====================================================================
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -208,69 +320,36 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "ዋና ዋና ክፍሎች (Quick Access)",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = "ተጨማሪ አገልግሎቶች (Lifestyle & Tools)",
+                        style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "8 አገልግሎቶች",
+                        text = "ቁርኣንና ዱዓ",
                         style = MaterialTheme.typography.labelSmall,
-                        color = islamicColors.goldAccent,
-                        fontWeight = FontWeight.SemiBold
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // 2-Column Responsive Grid of the 8 Main Cards
+                // 2-Column Grid of Secondary Features
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    // Row 1: Morning Azkar & Evening Azkar
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        val morningCat = categories.firstOrNull { it.id == "morning" } ?: categories.firstOrNull()
-                        val eveningCat = categories.firstOrNull { it.id == "evening" } ?: categories.getOrNull(1)
-
-                        QuickActionCard(
-                            title = "የጥዋት አዝካር",
-                            subtitle = "Morning Azkar",
-                            badgeText = "${morningCat?.items?.size ?: 30}+",
-                            icon = Icons.Default.WbSunny,
-                            modifier = Modifier.weight(1f),
-                            onClick = {
-                                if (morningCat != null) onCategoryClick(morningCat) else onNavigateTab(AppTab.HOME)
-                            }
-                        )
-
-                        QuickActionCard(
-                            title = "የማታ አዝካር",
-                            subtitle = "Evening Azkar",
-                            badgeText = "${eveningCat?.items?.size ?: 30}+",
-                            icon = Icons.Default.NightsStay,
-                            modifier = Modifier.weight(1f),
-                            onClick = {
-                                if (eveningCat != null) onCategoryClick(eveningCat) else onNavigateTab(AppTab.HOME)
-                            }
-                        )
-                    }
-
-                    // Row 2: Holy Quran & Duas
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        QuickActionCard(
+                        SecondaryActionCard(
                             title = "ቅዱስ ቁርኣን",
-                            subtitle = "Quran Surahs",
+                            subtitle = "Holy Quran",
                             badgeText = "114 ሱራ",
                             icon = Icons.Default.MenuBook,
                             modifier = Modifier.weight(1f),
-                            onClick = { onNavigateTab(AppTab.DUAS) }
+                            onClick = { onNavigateTab(AppTab.QURAN_DUA) }
                         )
 
-                        QuickActionCard(
+                        SecondaryActionCard(
                             title = "ዕለታዊ ዱዓዎች",
                             subtitle = "Essential Duas",
                             badgeText = "ተመርጠው",
@@ -280,12 +359,11 @@ fun HomeScreen(
                         )
                     }
 
-                    // Row 3: 99 Names of Allah & Tasbih Counter
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        QuickActionCard(
+                        SecondaryActionCard(
                             title = "99 የአላህ ስሞች",
                             subtitle = "Asmaul Husna",
                             badgeText = "99 ስሞች",
@@ -294,23 +372,22 @@ fun HomeScreen(
                             onClick = { onNavigateTab(AppTab.NAMES) }
                         )
 
-                        QuickActionCard(
+                        SecondaryActionCard(
                             title = "ተስቢሕ ቆጣሪ",
-                            subtitle = "Tasbih Counter",
+                            subtitle = "Digital Tasbih",
                             badgeText = "$tasbihCount / $tasbihTarget",
                             icon = Icons.Default.TouchApp,
                             modifier = Modifier.weight(1f),
-                            onClick = onNavigateTasbihTab
+                            onClick = { onNavigateTab(AppTab.TASBIH) }
                         )
                     }
 
-                    // Row 4: Prayer Times & Qibla Direction
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        QuickActionCard(
-                            title = "የሰላት ወቅቶች",
+                        SecondaryActionCard(
+                            title = "የሰላት ወቅት",
                             subtitle = "Prayer Times",
                             badgeText = "ትክክለኛ",
                             icon = Icons.Default.Mosque,
@@ -318,10 +395,10 @@ fun HomeScreen(
                             onClick = onOpenPrayerTab
                         )
 
-                        QuickActionCard(
-                            title = "ቂብላ አቅጣጫ",
-                            subtitle = "Qibla Compass",
-                            badgeText = "ካዕባ 🕋",
+                        SecondaryActionCard(
+                            title = "የቂብላ አቅጣጫ",
+                            subtitle = "Qibla Direction",
+                            badgeText = "ካዕባ",
                             icon = Icons.Default.Navigation,
                             modifier = Modifier.weight(1f),
                             onClick = onOpenQiblaTab
@@ -332,156 +409,791 @@ fun HomeScreen(
         }
 
         // =====================================================================
-        // D. DAILY INSPIRATION (Verified Hadith - Sahih al-Bukhari 6407)
+        // 6. TASBIH QUICK WIDGET
         // =====================================================================
         item {
-            DailyInspirationCard()
+            Surface(
+                shape = RoundedCornerShape(18.dp),
+                color = islamicColors.cardBg,
+                border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.5f)),
+                shadowElevation = 2.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "ፈጣን ተስቢሕ (Quick Tasbih)",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "ሱብሓነላህ • $tasbihCount ከ $tasbihTarget ተቆጥሯል",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = onTasbihQuickTap,
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(islamicColors.goldAccent)
+                                .testTag("home_quick_tasbih_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TouchApp,
+                                contentDescription = "Count Tasbih",
+                                tint = Color.Black
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        IconButton(onClick = onNavigateTasbihTab) {
+                            Icon(
+                                imageVector = Icons.Default.ChevronRight,
+                                contentDescription = "Open Tasbih Tab",
+                                tint = islamicColors.goldAccent
+                            )
+                        }
+                    }
+                }
+            }
         }
 
-        // =====================================================================
-        // E. TASBIH PREVIEW BANNER
-        // =====================================================================
+        // Bottom breathing space
         item {
-            TasbihPreviewBanner(
-                count = tasbihCount,
-                target = tasbihTarget,
-                onQuickTap = onTasbihQuickTap,
-                onOpenFullTasbih = onNavigateTasbihTab
-            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
+/**
+ * CARD 1 — MORNING AZKAR HERO CARD
+ * Deep emerald-green background with champagne-gold accents, sunrise-inspired visual touches,
+ * subtle geometric watermark, and live progress tracking.
+ */
 @Composable
-private fun FeaturedVerseCard(
-    isBookmarked: Boolean,
-    onToggleBookmark: () -> Unit,
-    onShare: () -> Unit
+private fun MorningAzkarHeroCard(
+    progress: AzkarSessionProgress?,
+    isRecommended: Boolean,
+    onStart: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val islamicColors = LocalIslamicColors.current
+    val total = progress?.totalItems ?: 24
+    val completed = progress?.completedItems ?: 0
+    val remaining = progress?.remainingItems ?: total
+    val fraction = progress?.progressFraction ?: 0f
+    val isComplete = progress?.isComplete == true
+    val isStarted = progress?.isStarted == true
+
+    val gradient = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFF072E23),
+            Color(0xFF0A3C2E),
+            Color(0xFF06251C)
+        ),
+        start = Offset(0f, 0f),
+        end = Offset(800f, 800f)
+    )
+
+    Surface(
+        shape = RoundedCornerShape(26.dp),
+        color = Color(0xFF072E23),
+        border = BorderStroke(
+            width = if (isRecommended) 2.dp else 1.5.dp,
+            color = if (isRecommended) islamicColors.goldAccent else islamicColors.goldAccent.copy(alpha = 0.5f)
+        ),
+        shadowElevation = if (isRecommended) 8.dp else 4.dp,
+        modifier = modifier
+            .clip(RoundedCornerShape(26.dp))
+            .clickable { onStart() }
+            .testTag("morning_azkar_hero_card")
+    ) {
+        Box(
+            modifier = Modifier
+                .background(gradient)
+                .fillMaxWidth()
+        ) {
+            // Sunrise Artwork Canvas (Gentle golden dawn rays & star)
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val w = size.width
+                val h = size.height
+                // Dawn glow circle at top-right
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0x33F2D99A), Color(0x11D9B66F), Color.Transparent),
+                        center = Offset(w * 0.85f, h * 0.25f),
+                        radius = w * 0.45f
+                    ),
+                    center = Offset(w * 0.85f, h * 0.25f),
+                    radius = w * 0.45f
+                )
+                // Geometric subtle rays
+                for (i in 0..7) {
+                    val angle = (i * 22.5f) * (Math.PI / 180f)
+                    val r1 = 30f
+                    val r2 = 90f
+                    val cx = w * 0.85f
+                    val cy = h * 0.25f
+                    drawLine(
+                        color = Color(0x22F2D99A),
+                        start = Offset(cx + (r1 * kotlin.math.cos(angle)).toFloat(), cy + (r1 * kotlin.math.sin(angle)).toFloat()),
+                        end = Offset(cx + (r2 * kotlin.math.cos(angle)).toFloat(), cy + (r2 * kotlin.math.sin(angle)).toFloat()),
+                        strokeWidth = 1.5f
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                // Top Tag Row: Sunrise Icon + Recommended Badge / Status Badge
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .background(Color(0x33F2D99A)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.WbSunny,
+                                contentDescription = "Sunrise",
+                                tint = islamicColors.goldAccent,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        if (isRecommended) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = islamicColors.goldAccent,
+                                contentColor = Color.Black
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.WbSunny,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = Color.Black
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "አሁን የሚመከር",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Completion or count chip
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isComplete) Color(0x334CAF50) else Color(0x22FFFFFF),
+                        border = BorderStroke(1.dp, if (isComplete) Color(0xFF4CAF50) else Color(0x33FFFFFF))
+                    ) {
+                        Text(
+                            text = if (isComplete) "ተጠናቋል ✓" else "$total አዝካሮች",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isComplete) Color(0xFF81C784) else Color(0xFFFAF7F0),
+                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Titles
+                Text(
+                    text = "የጥዋት አዝካር",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFFFAF7F0)
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Morning Azkar",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFFC5BAA5)
+                    )
+                    Text(
+                        text = "•",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = islamicColors.goldAccent
+                    )
+                    Text(
+                        text = "أذكار الصباح",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = islamicColors.goldAccent
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Progress Bar and Stats
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (isComplete) "የዛሬው የጥዋት አዝካር ተጠናቋል! ($completed/$total)"
+                        else if (isStarted) "$completed ተጠናቋል • $remaining ይቀራሉ"
+                        else "አልተጀመረም • $total አዝካሮች ተዘጋጅተዋል",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isComplete) Color(0xFF81C784) else Color(0xFFFAF7F0).copy(alpha = 0.9f),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "${(fraction * 100).toInt()}%",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = islamicColors.goldAccent,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                LinearProgressIndicator(
+                    progress = { fraction },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp)),
+                    color = islamicColors.goldAccent,
+                    trackColor = Color(0x33FFFFFF),
+                    strokeCap = StrokeCap.Round
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Action Button
+                Button(
+                    onClick = onStart,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isComplete) Color(0x33F2D99A) else islamicColors.goldAccent,
+                        contentColor = if (isComplete) islamicColors.goldAccent else Color.Black
+                    ),
+                    border = if (isComplete) BorderStroke(1.dp, islamicColors.goldAccent) else null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("start_morning_azkar_button")
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = if (isComplete) Icons.Default.CheckCircle
+                            else if (isStarted) Icons.Default.PlayArrow
+                            else Icons.Default.WbSunny,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isComplete) "አዝካሩን ከልስ (Review Azkar)"
+                            else if (isStarted) "ክፍለ-ጊዜውን ቀጥል (Resume Session)"
+                            else "የጥዋት አዝካር ጀምር (Start Morning Azkar)",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * CARD 2 — EVENING AZKAR HERO CARD
+ * Rich forest-green background with soft gold highlights, sunset & crescent moon visual touches,
+ * subtle geometric watermark, and live progress tracking.
+ */
+@Composable
+private fun EveningAzkarHeroCard(
+    progress: AzkarSessionProgress?,
+    isRecommended: Boolean,
+    onStart: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val islamicColors = LocalIslamicColors.current
+    val total = progress?.totalItems ?: 22
+    val completed = progress?.completedItems ?: 0
+    val remaining = progress?.remainingItems ?: total
+    val fraction = progress?.progressFraction ?: 0f
+    val isComplete = progress?.isComplete == true
+    val isStarted = progress?.isStarted == true
+
+    val gradient = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFF0A3326),
+            Color(0xFF0F4433),
+            Color(0xFF07241A)
+        ),
+        start = Offset(0f, 0f),
+        end = Offset(800f, 800f)
+    )
+
+    Surface(
+        shape = RoundedCornerShape(26.dp),
+        color = Color(0xFF0A3326),
+        border = BorderStroke(
+            width = if (isRecommended) 2.dp else 1.5.dp,
+            color = if (isRecommended) islamicColors.goldAccent else islamicColors.goldAccent.copy(alpha = 0.5f)
+        ),
+        shadowElevation = if (isRecommended) 8.dp else 4.dp,
+        modifier = modifier
+            .clip(RoundedCornerShape(26.dp))
+            .clickable { onStart() }
+            .testTag("evening_azkar_hero_card")
+    ) {
+        Box(
+            modifier = Modifier
+                .background(gradient)
+                .fillMaxWidth()
+        ) {
+            // Sunset / Dusk Twilight Artwork Canvas (Crescent moon glow & stars)
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val w = size.width
+                val h = size.height
+
+                // Dusk crescent glow at top-right
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0x33D9B66F), Color(0x110A3326), Color.Transparent),
+                        center = Offset(w * 0.85f, h * 0.25f),
+                        radius = w * 0.42f
+                    ),
+                    center = Offset(w * 0.85f, h * 0.25f),
+                    radius = w * 0.42f
+                )
+
+                // Crescent moon shape
+                val moonPath = Path().apply {
+                    val cx = w * 0.84f
+                    val cy = h * 0.24f
+                    val r = 24f
+                    moveTo(cx, cy - r)
+                    cubicTo(cx - r * 0.9f, cy - r * 0.5f, cx - r * 0.9f, cy + r * 0.5f, cx, cy + r)
+                    cubicTo(cx - r * 0.4f, cy + r * 0.4f, cx - r * 0.4f, cy - r * 0.4f, cx, cy - r)
+                    close()
+                }
+                drawPath(path = moonPath, color = Color(0x33F2D99A))
+
+                // Delicate stars
+                drawCircle(color = Color(0x44F2D99A), radius = 2.5f, center = Offset(w * 0.72f, h * 0.16f))
+                drawCircle(color = Color(0x33F2D99A), radius = 2f, center = Offset(w * 0.92f, h * 0.42f))
+                drawCircle(color = Color(0x44F2D99A), radius = 1.5f, center = Offset(w * 0.76f, h * 0.48f))
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                // Top Tag Row: Moon Icon + Recommended Badge / Status Badge
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(CircleShape)
+                                .background(Color(0x33F2D99A)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.NightsStay,
+                                contentDescription = "Sunset & Evening",
+                                tint = islamicColors.goldAccent,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        if (isRecommended) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = islamicColors.goldAccent,
+                                contentColor = Color.Black
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.NightsStay,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = Color.Black
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "አሁን የሚመከር",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isComplete) Color(0x334CAF50) else Color(0x22FFFFFF),
+                        border = BorderStroke(1.dp, if (isComplete) Color(0xFF4CAF50) else Color(0x33FFFFFF))
+                    ) {
+                        Text(
+                            text = if (isComplete) "ተጠናቋል ✓" else "$total አዝካሮች",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isComplete) Color(0xFF81C784) else Color(0xFFFAF7F0),
+                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Titles
+                Text(
+                    text = "የማታ አዝካር",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFFFAF7F0)
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Evening Azkar",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFFC5BAA5)
+                    )
+                    Text(
+                        text = "•",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = islamicColors.goldAccent
+                    )
+                    Text(
+                        text = "أذكار المساء",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = islamicColors.goldAccent
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Progress Bar and Stats
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (isComplete) "የዛሬው የማታ አዝካር ተጠናቋል! ($completed/$total)"
+                        else if (isStarted) "$completed ተጠናቋል • $remaining ይቀራሉ"
+                        else "አልተጀመረም • $total አዝካሮች ተዘጋጅተዋል",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isComplete) Color(0xFF81C784) else Color(0xFFFAF7F0).copy(alpha = 0.9f),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "${(fraction * 100).toInt()}%",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = islamicColors.goldAccent,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                LinearProgressIndicator(
+                    progress = { fraction },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp)),
+                    color = islamicColors.goldAccent,
+                    trackColor = Color(0x33FFFFFF),
+                    strokeCap = StrokeCap.Round
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Action Button
+                Button(
+                    onClick = onStart,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isComplete) Color(0x33F2D99A) else islamicColors.goldAccent,
+                        contentColor = if (isComplete) islamicColors.goldAccent else Color.Black
+                    ),
+                    border = if (isComplete) BorderStroke(1.dp, islamicColors.goldAccent) else null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("start_evening_azkar_button")
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = if (isComplete) Icons.Default.CheckCircle
+                            else if (isStarted) Icons.Default.PlayArrow
+                            else Icons.Default.NightsStay,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isComplete) "አዝካሩን ከልስ (Review Azkar)"
+                            else if (isStarted) "ክፍለ-ጊዜውን ቀጥል (Resume Session)"
+                            else "የማታ አዝካር ጀምር (Start Evening Azkar)",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Compact but beautiful Daily Azkar Progress Component.
+ * Displays Morning Azkar progress, Evening Azkar progress, total daily progress,
+ * and clear status badges.
+ */
+@Composable
+private fun DailyAzkarProgressComponent(
+    morningProgress: AzkarSessionProgress?,
+    eveningProgress: AzkarSessionProgress?,
+    modifier: Modifier = Modifier
+) {
+    val islamicColors = LocalIslamicColors.current
+
+    val mTotal = morningProgress?.totalItems ?: 24
+    val mDone = morningProgress?.completedItems ?: 0
+    val eTotal = eveningProgress?.totalItems ?: 22
+    val eDone = eveningProgress?.completedItems ?: 0
+
+    val combinedTotal = mTotal + eTotal
+    val combinedDone = mDone + eDone
+    val combinedFraction = if (combinedTotal > 0) combinedDone.toFloat() / combinedTotal.toFloat() else 0f
 
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = islamicColors.cardBg,
-        border = BorderStroke(1.2.dp, islamicColors.goldAccent.copy(alpha = 0.65f)),
-        shadowElevation = if (islamicColors.isGlassmorphism) 0.dp else 3.dp,
-        modifier = Modifier.fillMaxWidth()
+        border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.5f)),
+        shadowElevation = 2.dp,
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("daily_azkar_progress_card")
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(18.dp)
         ) {
-            // Header Row: Tag & Action icons (Bookmark & Share)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = islamicColors.goldAccent.copy(alpha = 0.15f),
-                    border = BorderStroke(1.dp, islamicColors.goldAccent.copy(alpha = 0.3f))
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        tint = islamicColors.goldAccent,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "የዕለቱ የተመረጠ አንቀጽ (Daily Verse)",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = islamicColors.goldAccent,
+                        text = "የዕለቱ አጠቃላይ የአዝካር እድገት",
+                        style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
-                Row {
-                    IconButton(
-                        onClick = onToggleBookmark,
-                        modifier = Modifier.size(34.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                            contentDescription = "Bookmark Verse",
-                            tint = if (isBookmarked) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    IconButton(
-                        onClick = onShare,
-                        modifier = Modifier.size(34.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share Verse",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                Text(
+                    text = "$combinedDone / $combinedTotal (${(combinedFraction * 100).toInt()}%)",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = islamicColors.goldAccent
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Verified Arabic Quranic Verse
-            Text(
-                text = "«فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ»",
-                fontSize = 24.sp,
-                lineHeight = 38.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Right,
-                color = islamicColors.arabicCalligraphyColor,
-                modifier = Modifier.fillMaxWidth()
+            // Dual / Combined Progress Bar
+            LinearProgressIndicator(
+                progress = { combinedFraction },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .testTag("daily_total_progress_bar"),
+                color = islamicColors.goldAccent,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Round
             )
 
-            IslamicGeometricDivider(
-                color = islamicColors.goldAccent.copy(alpha = 0.4f),
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // Verified Amharic Translation
-            Text(
-                text = "«አስታውሱኝ አስታውሳችኋለሁና፤ ለእኔም አመስግኑ፤ አትካዱኝም፡፡»",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 24.sp
-            )
+            // Two Session Status Chips Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Morning Chip
+                val isMDone = morningProgress?.isComplete == true
+                val isMStarted = morningProgress?.isStarted == true
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    border = BorderStroke(
+                        1.dp,
+                        if (isMDone) Color(0xFF4CAF50) else islamicColors.cardBorder.copy(alpha = 0.4f)
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (isMDone) Icons.Default.CheckCircle else Icons.Default.WbSunny,
+                            contentDescription = null,
+                            tint = if (isMDone) Color(0xFF4CAF50) else islamicColors.goldAccent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "የጥዋት አዝካር",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = if (isMDone) "ተጠናቋል ($mDone/$mTotal)"
+                                else if (isMStarted) "$mDone/$mTotal በሂደት"
+                                else "አልተጀመረም (0/$mTotal)",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontSize = 11.sp,
+                                color = if (isMDone) Color(0xFF4CAF50) else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Verified English Translation & Reference
-            Text(
-                text = "“So remember Me; I will remember you. And be grateful to Me and do not deny Me.”",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 18.sp
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "ሱረቱል አል-በቀራህ (Surah Al-Baqarah) • 152",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = islamicColors.goldAccent
-            )
+                // Evening Chip
+                val isEDone = eveningProgress?.isComplete == true
+                val isEStarted = eveningProgress?.isStarted == true
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    border = BorderStroke(
+                        1.dp,
+                        if (isEDone) Color(0xFF4CAF50) else islamicColors.cardBorder.copy(alpha = 0.4f)
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (isEDone) Icons.Default.CheckCircle else Icons.Default.NightsStay,
+                            contentDescription = null,
+                            tint = if (isEDone) Color(0xFF4CAF50) else islamicColors.goldAccent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = "የማታ አዝካር",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = if (isEDone) "ተጠናቋል ($eDone/$eTotal)"
+                                else if (isEStarted) "$eDone/$eTotal በሂደት"
+                                else "አልተጀመረም (0/$eTotal)",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontSize = 11.sp,
+                                color = if (isEDone) Color(0xFF4CAF50) else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
+/**
+ * Secondary lifestyle action card (distinctly smaller and subordinate to the Hero Cards).
+ */
 @Composable
-private fun QuickActionCard(
+private fun SecondaryActionCard(
     title: String,
     subtitle: String,
     badgeText: String,
     icon: ImageVector,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val islamicColors = LocalIslamicColors.current
 
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = islamicColors.cardBg,
-        border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.55f)),
+        border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.4f)),
+        shadowElevation = 1.dp,
         modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
+            .testTag("secondary_card_${title}")
     ) {
         Column(
             modifier = Modifier
@@ -490,33 +1202,33 @@ private fun QuickActionCard(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(islamicColors.goldAccent.copy(alpha = 0.16f)),
+                        .size(34.dp)
+                        .clip(CircleShape)
+                        .background(islamicColors.goldAccent.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = title,
                         tint = islamicColors.goldAccent,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 
                 Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = islamicColors.goldAccent.copy(alpha = 0.12f)
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
                 ) {
                     Text(
                         text = badgeText,
                         style = MaterialTheme.typography.labelSmall,
-                        color = islamicColors.goldAccent,
-                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 10.sp,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                     )
                 }
@@ -526,7 +1238,7 @@ private fun QuickActionCard(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -534,118 +1246,33 @@ private fun QuickActionCard(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 11.sp
             )
         }
     }
 }
 
+/**
+ * Featured Daily Verse Card (Al-Baqarah 152).
+ */
 @Composable
-private fun DailyInspirationCard() {
-    val islamicColors = LocalIslamicColors.current
-    val context = LocalContext.current
-
-    Surface(
-        shape = RoundedCornerShape(18.dp),
-        color = islamicColors.cardBg,
-        border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.5f)),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "ዕለታዊ ምክር / ሐዲስ (Daily Reflection)",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = islamicColors.goldAccent
-                )
-                IconButton(
-                    onClick = {
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            val body = """
-                                የአላህ መልእክተኛ (ﷺ) እንዲህ ብለዋል፡-
-                                «مَثَلُ الَّذِي يَذْكُرُ رَبَّهُ وَالَّذِي لَا يَذْكُرُ رَبَّهُ مَثَلُ الْحَيِّ وَالْمَيِّتِ»
-                                «ጌታውን የሚያወሳና የማያወሳ ሰው ምሳሌ፤ ልክ የሕያውና የሙት ምሳሌ ነው፡፡»
-                                [ሶሒሕ አል-ቡኻሪ 6407]
-                                
-                                (Nur Islamic Lifestyle)
-                            """.trimIndent()
-                            putExtra(Intent.EXTRA_TEXT, body)
-                        }
-                        context.startActivity(Intent.createChooser(shareIntent, "ሐዲሱን ያጋሩ"))
-                    },
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "«مَثَلُ الَّذِي يَذْكُرُ رَبَّهُ وَالَّذِي لَا يَذْكُرُ رَبَّهُ مَثَلُ الْحَيِّ وَالْمَيِّتِ»",
-                fontSize = 18.sp,
-                lineHeight = 28.sp,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Right,
-                color = islamicColors.arabicCalligraphyColor,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "የአላህ መልእክተኛ (ﷺ) እንዲህ ብለዋል፡- «ጌታውን የሚያወሳና የማያወሳ ሰው ምሳሌ፤ ልክ የሕያውና የሙት ምሳሌ ነው፡፡»",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 22.sp
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "ምንጭ: ሶሒሕ አል-ቡኻሪ 6407 (Sahih al-Bukhari)",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-@Composable
-private fun TasbihPreviewBanner(
-    count: Int,
-    target: Int,
-    onQuickTap: () -> Unit,
-    onOpenFullTasbih: () -> Unit
+private fun FeaturedVerseCard(
+    isBookmarked: Boolean,
+    onToggleBookmark: () -> Unit,
+    onShare: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val islamicColors = LocalIslamicColors.current
-    val progress = (count.toFloat() / target.toFloat()).coerceIn(0f, 1f)
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = spring(),
-        label = "previewProgress"
-    )
 
     Surface(
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(20.dp),
         color = islamicColors.cardBg,
-        border = BorderStroke(1.dp, islamicColors.goldAccent.copy(alpha = 0.5f)),
-        modifier = Modifier.fillMaxWidth()
+        border = BorderStroke(1.dp, islamicColors.goldAccent.copy(alpha = 0.4f)),
+        shadowElevation = 2.dp,
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("daily_verse_card")
     ) {
         Column(
             modifier = Modifier
@@ -657,81 +1284,80 @@ private fun TasbihPreviewBanner(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onOpenFullTasbih() }
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "ፈጣን ተስቢሕ ቆጣሪ",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.MenuBook,
+                        contentDescription = null,
+                        tint = islamicColors.goldAccent,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "የዕለቱ የቁርኣን አንቀጽ (Daily Verse)",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = islamicColors.goldAccent
+                    )
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = onToggleBookmark,
+                        modifier = Modifier.size(32.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.ChevronRight,
-                            contentDescription = "Open Tasbih",
-                            tint = islamicColors.goldAccent,
+                            imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                            contentDescription = "Bookmark",
+                            tint = if (isBookmarked) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
                     }
-                    Text(
-                        text = "ሱብሓነላህ • ዒላማ: $target ዚክሮች",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
 
-                // Interactive increment button with big number
-                Box(
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clip(CircleShape)
-                        .background(islamicColors.goldAccent.copy(alpha = 0.2f))
-                        .clickable { onQuickTap() }
-                        .padding(2.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Surface(
-                        shape = CircleShape,
-                        color = islamicColors.goldAccent,
-                        modifier = Modifier.size(46.dp)
+                    IconButton(
+                        onClick = onShare,
+                        modifier = Modifier.size(32.dp)
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text(
-                                text = "$count",
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 17.sp,
-                                color = Color.Black
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Progress bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp))
-                    .background(islamicColors.cardBorder.copy(alpha = 0.4f))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(animatedProgress)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(islamicColors.goldAccent, islamicColors.arabicCalligraphyColor)
-                            )
-                        )
-                )
-            }
+            Text(
+                text = "«فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ»",
+                fontSize = 20.sp,
+                lineHeight = 34.sp,
+                textAlign = TextAlign.Right,
+                fontWeight = FontWeight.Bold,
+                color = islamicColors.arabicCalligraphyColor,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            IslamicGeometricDivider(
+                color = islamicColors.goldAccent.copy(alpha = 0.4f),
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            Text(
+                text = "«አስታውሱኝ አስታውሳችኋለሁና፤ ለእኔም አመስግኑ፤ አትካዱኝም፡፡»",
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 22.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = "ሱረቱል አል-በቀራህ • 152",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

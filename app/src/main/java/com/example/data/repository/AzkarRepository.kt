@@ -31,6 +31,8 @@ class AzkarRepository(private val context: Context) {
         private const val KEY_TASBIH_TARGET = "pref_tasbih_target"
         private const val KEY_TASBIH_TOTAL = "pref_tasbih_total"
         private const val KEY_COMPLETED_AZKAR_PREFIX = "pref_done_azkar_"
+        private const val KEY_DAILY_DATE = "pref_daily_date"
+        private const val KEY_RESUME_INDEX_PREFIX = "pref_resume_idx_"
     }
 
     /**
@@ -203,21 +205,106 @@ class AzkarRepository(private val context: Context) {
         prefs.edit().putInt(KEY_TASBIH_TOTAL, current + 1).apply()
     }
 
-    // ================= Per-Item Repeat Counts (Daily Session) ================= //
+    // ================= Per-Item Repeat Counts & Daily Session Policy ================= //
+
+    fun getTodayDate(): String {
+        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+        return sdf.format(java.util.Date())
+    }
+
+    /**
+     * Clear daily counts only when the local calendar date changes.
+     * Preserves favorites, settings, theme, Tasbih total, and cumulative stats.
+     */
+    fun checkAndApplyDailyReset() {
+        val today = getTodayDate()
+        val lastDate = prefs.getString(KEY_DAILY_DATE, null)
+        if (lastDate == null) {
+            prefs.edit().putString(KEY_DAILY_DATE, today).apply()
+        } else if (lastDate != today) {
+            // New day! Reset today's active progress
+            val editor = prefs.edit()
+            val allKeys = prefs.all.keys
+            for (key in allKeys) {
+                if (key.startsWith(KEY_COMPLETED_AZKAR_PREFIX)) {
+                    editor.remove(key)
+                }
+            }
+            editor.putString(KEY_DAILY_DATE, today)
+            editor.apply()
+        }
+    }
 
     fun getItemCompletedCount(uniqueKey: String): Int {
         return prefs.getInt(KEY_COMPLETED_AZKAR_PREFIX + uniqueKey, 0)
     }
 
+    fun getItemCompletedCount(categoryId: String, itemId: String): Int {
+        val compositeKey = "${categoryId}_$itemId"
+        if (prefs.contains(KEY_COMPLETED_AZKAR_PREFIX + compositeKey)) {
+            return prefs.getInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, 0)
+        }
+        return prefs.getInt(KEY_COMPLETED_AZKAR_PREFIX + itemId, 0)
+    }
+
     fun incrementItemCount(uniqueKey: String, maxRepeat: Int): Int {
         val current = getItemCompletedCount(uniqueKey)
-        val next = if (current < maxRepeat) current + 1 else 0
+        val next = if (current < maxRepeat) current + 1 else maxRepeat
         prefs.edit().putInt(KEY_COMPLETED_AZKAR_PREFIX + uniqueKey, next).apply()
+        return next
+    }
+
+    fun incrementItemCount(categoryId: String, itemId: String, maxRepeat: Int): Int {
+        val current = getItemCompletedCount(categoryId, itemId)
+        val next = if (current < maxRepeat) current + 1 else maxRepeat
+        val compositeKey = "${categoryId}_$itemId"
+        prefs.edit()
+            .putInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, next)
+            .putInt(KEY_COMPLETED_AZKAR_PREFIX + itemId, next)
+            .apply()
         return next
     }
 
     fun resetItemCount(uniqueKey: String) {
         prefs.edit().putInt(KEY_COMPLETED_AZKAR_PREFIX + uniqueKey, 0).apply()
+    }
+
+    fun resetItemCount(categoryId: String, itemId: String) {
+        val compositeKey = "${categoryId}_$itemId"
+        prefs.edit()
+            .putInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, 0)
+            .putInt(KEY_COMPLETED_AZKAR_PREFIX + itemId, 0)
+            .apply()
+    }
+
+    fun resetCategoryProgress(categoryId: String, itemIds: List<String>) {
+        val editor = prefs.edit()
+        for (id in itemIds) {
+            editor.remove(KEY_COMPLETED_AZKAR_PREFIX + "${categoryId}_$id")
+            editor.remove(KEY_COMPLETED_AZKAR_PREFIX + id)
+        }
+        editor.putInt(KEY_RESUME_INDEX_PREFIX + categoryId, 0)
+        editor.apply()
+    }
+
+    fun getResumeIndex(categoryId: String): Int {
+        return prefs.getInt(KEY_RESUME_INDEX_PREFIX + categoryId, 0)
+    }
+
+    fun saveResumeIndex(categoryId: String, index: Int) {
+        prefs.edit().putInt(KEY_RESUME_INDEX_PREFIX + categoryId, index).apply()
+    }
+
+    fun getAllItemCompletedCounts(): Map<String, Int> {
+        val result = mutableMapOf<String, Int>()
+        val all = prefs.all
+        for ((key, value) in all) {
+            if (key.startsWith(KEY_COMPLETED_AZKAR_PREFIX) && value is Int) {
+                val itemKey = key.removePrefix(KEY_COMPLETED_AZKAR_PREFIX)
+                result[itemKey] = value
+            }
+        }
+        return result
     }
 
     // ================= City Selection ================= //

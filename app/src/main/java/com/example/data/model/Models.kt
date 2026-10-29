@@ -27,6 +27,37 @@ data class AzkarCategory(
 )
 
 /**
+ * Reading display mode for Azkar sessions.
+ */
+enum class AzkarReaderMode {
+    GUIDED,
+    LIST
+}
+
+/**
+ * Time of day period for recommended Azkar emphasis.
+ */
+enum class RecommendedPeriod {
+    MORNING,
+    EVENING,
+    BALANCED
+}
+
+/**
+ * Calculated progress for an Azkar session.
+ */
+data class AzkarSessionProgress(
+    val categoryId: String,
+    val completedItems: Int,
+    val totalItems: Int,
+    val remainingItems: Int,
+    val progressFraction: Float,
+    val isComplete: Boolean,
+    val isStarted: Boolean,
+    val resumeIndex: Int
+)
+
+/**
  * Represents an Islamic Dua entry.
  */
 data class DuaItem(

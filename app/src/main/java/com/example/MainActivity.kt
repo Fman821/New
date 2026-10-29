@@ -55,6 +55,7 @@ import com.example.ui.components.ModernTasbihView
 import com.example.ui.components.ThemeSelectorDialog
 import com.example.ui.screens.AzkarCategoriesScreen
 import com.example.ui.screens.AzkarListScreen
+import com.example.ui.screens.AzkarReaderScreen
 import com.example.ui.screens.FavoritesScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.NamesOfAllahScreen
@@ -250,17 +251,23 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     CircularProgressIndicator(color = islamicColors.goldAccent)
                 }
             } else if (uiState.selectedCategory != null) {
-                AzkarListScreen(
+                AzkarReaderScreen(
                     category = uiState.selectedCategory!!,
+                    readerMode = uiState.readerMode,
+                    guidedIndex = uiState.guidedItemIndex,
                     itemCompletedCounts = uiState.itemCompletedCounts,
                     favorites = uiState.favorites,
                     arabicFontScale = uiState.arabicFontScale,
                     audioState = uiState.audioState,
                     onBack = { viewModel.closeCategory() },
-                    onIncrementCount = { id, max -> viewModel.incrementItemCount(id, max) },
-                    onResetCount = { id -> viewModel.resetItemCount(id) },
+                    onSetReaderMode = { viewModel.setReaderMode(it) },
+                    onSetGuidedIndex = { viewModel.setGuidedItemIndex(it) },
+                    onIncrementCount = { catId, itemId, max -> viewModel.incrementItemCount(catId, itemId, max) },
+                    onResetCount = { catId, itemId -> viewModel.resetItemCount(catId, itemId) },
+                    onResetCategorySession = { catId -> viewModel.resetCategorySession(catId) },
                     onToggleFavorite = { id -> viewModel.toggleFavorite(id) },
-                    onToggleAudio = { url -> viewModel.toggleAudio(url) }
+                    onToggleAudio = { url -> viewModel.toggleAudio(url) },
+                    onUpdateFontScale = { viewModel.setArabicFontScale(it) }
                 )
             } else {
                 Crossfade(targetState = uiState.currentTab, label = "tabCrossfade") { tab ->
@@ -269,11 +276,16 @@ fun MainAppScreen(viewModel: MainViewModel) {
                             val isVerseBookmarked = uiState.favorites.contains("daily_verse_albaqarah_152")
                             HomeScreen(
                                 categories = uiState.categories,
+                                morningProgress = uiState.morningProgress,
+                                eveningProgress = uiState.eveningProgress,
+                                recommendedPeriod = uiState.recommendedPeriod,
                                 tasbihCount = uiState.tasbihCount,
                                 tasbihTarget = uiState.tasbihTarget,
                                 isVerseBookmarked = isVerseBookmarked,
                                 onToggleBookmarkVerse = { viewModel.toggleBookmarkDailyVerse() },
-                                onCategoryClick = { viewModel.openCategory(it) },
+                                onStartMorningAzkar = { viewModel.openMorningAzkar(guided = true) },
+                                onStartEveningAzkar = { viewModel.openEveningAzkar(guided = true) },
+                                onCategoryClick = { viewModel.openCategory(it, guided = true) },
                                 onNavigateTab = { targetTab ->
                                     if (targetTab == AppTab.DUAS) {
                                         quranInitialTab = 1
@@ -296,7 +308,11 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         AppTab.AZKAR -> {
                             AzkarCategoriesScreen(
                                 categories = uiState.categories,
-                                onCategoryClick = { viewModel.openCategory(it) }
+                                morningProgress = uiState.morningProgress,
+                                eveningProgress = uiState.eveningProgress,
+                                onStartMorning = { viewModel.openMorningAzkar(guided = true) },
+                                onStartEvening = { viewModel.openEveningAzkar(guided = true) },
+                                onCategoryClick = { viewModel.openCategory(it, guided = true) }
                             )
                         }
                         AppTab.QURAN_DUA, AppTab.DUAS -> {

@@ -6,10 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.model.AllahName
 import com.example.data.model.AppThemeMode
 import com.example.data.model.AzkarCategory
-import com.example.data.model.AzkarItem
+import com.example.data.model.AzkarReaderMode
+import com.example.data.model.AzkarSessionProgress
 import com.example.data.model.DuaItem
 import com.example.data.model.IslamicCity
 import com.example.data.model.PrayerSchedule
+import com.example.data.model.RecommendedPeriod
 import com.example.data.prayer.PrayerTimesCalculator
 import com.example.data.repository.AudioPlaybackState
 import com.example.data.repository.AudioPlayerManager
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 /**
  * Main navigation destinations in the application.
@@ -40,6 +43,8 @@ enum class AppTab(val titleAm: String) {
 data class MainUiState(
     val currentTab: AppTab = AppTab.HOME,
     val selectedCategory: AzkarCategory? = null,
+    val readerMode: AzkarReaderMode = AzkarReaderMode.GUIDED,
+    val guidedItemIndex: Int = 0,
     val categories: List<AzkarCategory> = emptyList(),
     val duas: List<DuaItem> = emptyList(),
     val namesOfAllah: List<AllahName> = emptyList(),
@@ -59,6 +64,9 @@ data class MainUiState(
     val tasbihVibrationEnabled: Boolean = true,
     // Per-Azkar item completed count in current session
     val itemCompletedCounts: Map<String, Int> = emptyMap(),
+    val morningProgress: AzkarSessionProgress? = null,
+    val eveningProgress: AzkarSessionProgress? = null,
+    val recommendedPeriod: RecommendedPeriod = RecommendedPeriod.BALANCED,
     val audioState: AudioPlaybackState = AudioPlaybackState.Idle,
     val isLoading: Boolean = true
 )
@@ -81,6 +89,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun loadInitialData() {
         viewModelScope.launch {
+            // Apply daily date reset check (only resets daily counters when local date changes)
+            repository.checkAndApplyDailyReset()
+
             val savedTheme = repository.getSavedTheme()
             val fontScale = repository.getArabicFontScale()
             val favorites = repository.getFavorites()
@@ -97,6 +108,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val duas = repository.loadDuas()
             val names = repository.loadNamesOfAllah()
 
+            val allCounts = repository.getAllItemCompletedCounts()
+            val morningCat = categories.firstOrNull { it.id == "morning" }
+            val eveningCat = categories.firstOrNull { it.id == "evening" }
+
+            val morningProg = computeSessionProgress(morningCat, allCounts)
+            val eveningProg = computeSessionProgress(eveningCat, allCounts)
+            val recommended = calculateRecommendedPeriod()
+
             _uiState.update {
                 it.copy(
                     currentTheme = savedTheme,
@@ -110,6 +129,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     categories = categories,
                     duas = duas,
                     namesOfAllah = names,
+                    itemCompletedCounts = allCounts,
+                    morningProgress = morningProg,
+                    eveningProgress = eveningProg,
+                    recommendedPeriod = recommended,
                     isLoading = false
                 )
             }
@@ -124,25 +147,134 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    private fun calculateRecommendedPeriod(): RecommendedPeriod {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        return when (hour) {
+            in 4..11 -> RecommendedPeriod.MORNING
+            in 15..22 -> RecommendedPeriod.EVENING
+            else -> RecommendedPeriod.BALANCED
+        }
+    }
+
+    private fun computeSessionProgress(category: AzkarCategory?, counts: Map<String, Int>): AzkarSessionProgress? {
+        if (category == null) return null
+        val total = category.items.size
+        val completed = category.items.count { item ->
+            val count = counts["${category.id}_${item.id}"] ?: counts[item.id] ?: 0
+            count >= item.repeat
+        }
+        val remaining = (total - completed).coerceAtLeast(0)
+        val fraction = if (total > 0) completed.toFloat() / total.toFloat() else 0f
+        val isComplete = total > 0 && completed == total
+        val isStarted = completed > 0 || category.items.any { item ->
+            val count = counts["${category.id}_${item.id}"] ?: counts[item.id] ?: 0
+            count > 0
+        }
+        val resumeIdx = repository.getResumeIndex(category.id).coerceIn(0, (total - 1).coerceAtLeast(0))
+        return AzkarSessionProgress(
+            categoryId = category.id,
+            completedItems = completed,
+            totalItems = total,
+            remainingItems = remaining,
+            progressFraction = fraction,
+            isComplete = isComplete,
+            isStarted = isStarted,
+            resumeIndex = resumeIdx
+        )
+    }
+
     // ================= Navigation ================= //
 
     fun setTab(tab: AppTab) {
         _uiState.update { it.copy(currentTab = tab, selectedCategory = null, searchQuery = "") }
     }
 
-    fun openCategory(category: AzkarCategory) {
-        _uiState.update { it.copy(selectedCategory = category, searchQuery = "") }
+    fun openMorningAzkar(guided: Boolean = true) {
+        val morning = _uiState.value.categories.firstOrNull { it.id == "morning" } ?: return
+        val resumeIdx = repository.getResumeIndex("morning").coerceIn(0, (morning.items.size - 1).coerceAtLeast(0))
+        _uiState.update {
+            it.copy(
+                selectedCategory = morning,
+                readerMode = if (guided) AzkarReaderMode.GUIDED else AzkarReaderMode.LIST,
+                guidedItemIndex = resumeIdx,
+                searchQuery = ""
+            )
+        }
     }
 
-    fun openCategoryById(categoryId: String) {
+    fun openEveningAzkar(guided: Boolean = true) {
+        val evening = _uiState.value.categories.firstOrNull { it.id == "evening" } ?: return
+        val resumeIdx = repository.getResumeIndex("evening").coerceIn(0, (evening.items.size - 1).coerceAtLeast(0))
+        _uiState.update {
+            it.copy(
+                selectedCategory = evening,
+                readerMode = if (guided) AzkarReaderMode.GUIDED else AzkarReaderMode.LIST,
+                guidedItemIndex = resumeIdx,
+                searchQuery = ""
+            )
+        }
+    }
+
+    fun openCategory(category: AzkarCategory, guided: Boolean = false) {
+        val resumeIdx = repository.getResumeIndex(category.id).coerceIn(0, (category.items.size - 1).coerceAtLeast(0))
+        _uiState.update {
+            it.copy(
+                selectedCategory = category,
+                readerMode = if (guided) AzkarReaderMode.GUIDED else AzkarReaderMode.LIST,
+                guidedItemIndex = resumeIdx,
+                searchQuery = ""
+            )
+        }
+    }
+
+    fun openCategoryById(categoryId: String, guided: Boolean = false) {
         val cat = _uiState.value.categories.firstOrNull { it.id == categoryId }
         if (cat != null) {
-            openCategory(cat)
+            openCategory(cat, guided)
         }
     }
 
     fun closeCategory() {
+        stopAudio()
         _uiState.update { it.copy(selectedCategory = null, searchQuery = "") }
+    }
+
+    fun setReaderMode(mode: AzkarReaderMode) {
+        _uiState.update { it.copy(readerMode = mode) }
+    }
+
+    fun setGuidedItemIndex(index: Int) {
+        val category = _uiState.value.selectedCategory ?: return
+        val safeIndex = index.coerceIn(0, (category.items.size - 1).coerceAtLeast(0))
+        repository.saveResumeIndex(category.id, safeIndex)
+        _uiState.update { it.copy(guidedItemIndex = safeIndex) }
+    }
+
+    fun nextGuidedItem() {
+        val category = _uiState.value.selectedCategory ?: return
+        val nextIdx = (_uiState.value.guidedItemIndex + 1).coerceAtMost(category.items.size - 1)
+        setGuidedItemIndex(nextIdx)
+    }
+
+    fun prevGuidedItem() {
+        val prevIdx = (_uiState.value.guidedItemIndex - 1).coerceAtLeast(0)
+        setGuidedItemIndex(prevIdx)
+    }
+
+    fun resetCategorySession(categoryId: String) {
+        val category = _uiState.value.categories.firstOrNull { it.id == categoryId } ?: return
+        repository.resetCategoryProgress(categoryId, category.items.map { it.id })
+        val allCounts = repository.getAllItemCompletedCounts()
+        val morningCat = _uiState.value.categories.firstOrNull { it.id == "morning" }
+        val eveningCat = _uiState.value.categories.firstOrNull { it.id == "evening" }
+        _uiState.update {
+            it.copy(
+                itemCompletedCounts = allCounts,
+                guidedItemIndex = 0,
+                morningProgress = computeSessionProgress(morningCat, allCounts),
+                eveningProgress = computeSessionProgress(eveningCat, allCounts)
+            )
+        }
     }
 
     fun setSearchQuery(query: String) {
@@ -188,20 +320,42 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // ================= Per-Azkar item count tracking ================= //
 
-    fun incrementItemCount(itemId: String, maxRepeat: Int) {
-        val current = _uiState.value.itemCompletedCounts[itemId] ?: repository.getItemCompletedCount(itemId)
-        val next = if (current < maxRepeat) current + 1 else 0
-        repository.incrementItemCount(itemId, maxRepeat)
+    fun incrementItemCount(categoryId: String, itemId: String, maxRepeat: Int) {
+        repository.incrementItemCount(categoryId, itemId, maxRepeat)
+        val updatedCounts = repository.getAllItemCompletedCounts()
+        val morningCat = _uiState.value.categories.firstOrNull { it.id == "morning" }
+        val eveningCat = _uiState.value.categories.firstOrNull { it.id == "evening" }
         _uiState.update {
-            it.copy(itemCompletedCounts = it.itemCompletedCounts + (itemId to next))
+            it.copy(
+                itemCompletedCounts = updatedCounts,
+                morningProgress = computeSessionProgress(morningCat, updatedCounts),
+                eveningProgress = computeSessionProgress(eveningCat, updatedCounts)
+            )
+        }
+    }
+
+    fun incrementItemCount(itemId: String, maxRepeat: Int) {
+        val catId = _uiState.value.selectedCategory?.id ?: ""
+        incrementItemCount(catId, itemId, maxRepeat)
+    }
+
+    fun resetItemCount(categoryId: String, itemId: String) {
+        repository.resetItemCount(categoryId, itemId)
+        val updatedCounts = repository.getAllItemCompletedCounts()
+        val morningCat = _uiState.value.categories.firstOrNull { it.id == "morning" }
+        val eveningCat = _uiState.value.categories.firstOrNull { it.id == "evening" }
+        _uiState.update {
+            it.copy(
+                itemCompletedCounts = updatedCounts,
+                morningProgress = computeSessionProgress(morningCat, updatedCounts),
+                eveningProgress = computeSessionProgress(eveningCat, updatedCounts)
+            )
         }
     }
 
     fun resetItemCount(itemId: String) {
-        repository.resetItemCount(itemId)
-        _uiState.update {
-            it.copy(itemCompletedCounts = it.itemCompletedCounts + (itemId to 0))
-        }
+        val catId = _uiState.value.selectedCategory?.id ?: ""
+        resetItemCount(catId, itemId)
     }
 
     // ================= Tasbih ================= //
