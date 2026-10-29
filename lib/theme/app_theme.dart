@@ -22,6 +22,10 @@ class IslamicThemeColors {
     this.isGlass = false,
   });
 
+  Color get background => bg;
+  Color get primaryText => text;
+  Color get subtextColor => subtext;
+
   static const sacredLight = IslamicThemeColors(
     bg: Color(0xFFF9F6F0),
     surface: Color(0xFFFFFFFF),

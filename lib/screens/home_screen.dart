@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
     final isEveningTime = hour >= 15 && hour < 23;
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         'ዕለታዊ አዝካር (Daily Azkar)',
                         style: TextStyle(
-                          color: colors.primaryText,
+                          color: colors.text,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'ተጨማሪ አገልግሎቶች (Tools & Lifestyle)',
                     style: TextStyle(
-                      color: colors.primaryText,
+                      color: colors.text,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'ቁርኣንና ዱዓ',
                     style: TextStyle(
-                      color: colors.subtextColor,
+                      color: colors.subtext,
                       fontSize: 11,
                     ),
                   ),
@@ -269,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Nur Islamic Lifestyle',
                     style: TextStyle(
-                      color: colors.primaryText,
+                      color: colors.text,
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.2,
@@ -576,7 +576,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'የዕለቱ አጠቃላይ የአዝካር እድገት',
                     style: TextStyle(
-                      color: colors.primaryText,
+                      color: colors.text,
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
@@ -613,7 +613,7 @@ class _HomePageState extends State<HomePage> {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: colors.background,
+                    color: colors.bg,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: mDone == mTotal && mTotal > 0
@@ -636,7 +636,7 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               'የጥዋት አዝካር',
                               style: TextStyle(
-                                color: colors.primaryText,
+                                color: colors.text,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -646,7 +646,7 @@ class _HomePageState extends State<HomePage> {
                                   ? 'ተጠናቋል ($mDone/$mTotal)'
                                   : '$mDone/$mTotal በሂደት',
                               style: TextStyle(
-                                color: colors.subtextColor,
+                                color: colors.subtext,
                                 fontSize: 10,
                               ),
                             ),
@@ -664,7 +664,7 @@ class _HomePageState extends State<HomePage> {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: colors.background,
+                    color: colors.bg,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: eDone == eTotal && eTotal > 0
@@ -687,7 +687,7 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               'የማታ አዝካር',
                               style: TextStyle(
-                                color: colors.primaryText,
+                                color: colors.text,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -697,7 +697,7 @@ class _HomePageState extends State<HomePage> {
                                   ? 'ተጠናቋል ($eDone/$eTotal)'
                                   : '$eDone/$eTotal በሂደት',
                               style: TextStyle(
-                                color: colors.subtextColor,
+                                color: colors.subtext,
                                 fontSize: 10,
                               ),
                             ),
@@ -755,7 +755,7 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 'ሱረቱል አል-በቀራህ • 152',
-                style: TextStyle(color: colors.subtextColor, fontSize: 10),
+                style: TextStyle(color: colors.subtext, fontSize: 10),
               ),
             ],
           ),
@@ -897,7 +897,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     title,
                     style: TextStyle(
-                      color: colors.primaryText,
+                      color: colors.text,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -905,7 +905,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      color: colors.subtextColor,
+                      color: colors.subtext,
                       fontSize: 10,
                     ),
                   ),
@@ -942,7 +942,7 @@ class _HomePageState extends State<HomePage> {
               Text(
                 'ፈጣን ተስቢሕ (Quick Tasbih)',
                 style: TextStyle(
-                  color: colors.primaryText,
+                  color: colors.text,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -950,7 +950,7 @@ class _HomePageState extends State<HomePage> {
               Text(
                 '${provider.tasbihPreset} • ${provider.tasbihCount} ከ ${provider.tasbihTarget}',
                 style: TextStyle(
-                  color: colors.subtextColor,
+                  color: colors.subtext,
                   fontSize: 11,
                 ),
               ),
