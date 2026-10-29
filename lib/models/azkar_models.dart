@@ -131,4 +131,8 @@ enum AppThemeMode {
   final String descAm;
 
   const AppThemeMode(this.titleAm, this.descAm);
+
+  String get title => titleAm;
+  String get desc => descAm;
+  String get description => descAm;
 }

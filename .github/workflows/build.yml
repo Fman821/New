@@ -43,7 +43,6 @@ jobs:
           rm -rf android
           flutter create . --platforms=android --org com.aistudio.nurazkar
           echo "android.newDsl=false" >> android/gradle.properties
-          echo "android.defaults.buildfeatures.buildconfig=true" >> android/gradle.properties
 
       # Step 5: Add permissions to AndroidManifest.xml
       - name: Configure Android Permissions
