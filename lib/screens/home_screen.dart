@@ -6,19 +6,31 @@ import '../theme/app_theme.dart';
 import '../widgets/theme_dialog.dart';
 import 'azkar_list_screen.dart';
 import 'duas_screen.dart';
-import 'favorites_screen.dart';
 import 'names_screen.dart';
+import 'favorites_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+/// HomePage: Fully customized Islamic Azkar & Dua home screen
+/// Features:
+/// 1. Full-screen night sky and mosque silhouette background using Stack & CustomPainter.
+/// 2. Header with Islamic greeting, badge, and settings button.
+/// 3. Ayah Card («فَاذْكُرُونِي أَذْكُرْكُمْ») with decorative Islamic borders.
+/// 4. Strict 2x2 Grid with ONLY 4 main cards (Morning Azkar, Evening Azkar, 99 Names, Locked Coming Soon).
+/// 5. 5-item bottom navigation bar for quick access.
+class HomePage extends StatefulWidget {
   final VoidCallback? onOpenTasbih;
 
-  const HomeScreen({super.key, this.onOpenTasbih});
+  const HomePage({super.key, this.onOpenTasbih});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+/// Backwards compatibility alias for existing project navigators
+class HomeScreen extends HomePage {
+  const HomeScreen({super.key, super.onOpenTasbih});
+}
+
+class _HomePageState extends State<HomePage> {
   int _navIndex = 0;
 
   @override
@@ -27,46 +39,53 @@ class _HomeScreenState extends State<HomeScreen> {
     final colors = IslamicThemeColors.fromMode(provider.currentTheme);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF040E14),
+      backgroundColor: const Color(0xFF030D12),
       bottomNavigationBar: _buildBottomNav(context, colors),
       body: Stack(
         children: [
-          // 1. FULL-SCREEN NIGHT SKY & MOSQUE BACKGROUND
+          // -------------------------------------------------------------
+          // 1. FULL-SCREEN NIGHT ATMOSPHERE & MOSQUE BACKGROUND
+          // -------------------------------------------------------------
+          // Custom Canvas: Deep night sky, glowing crescent, twinkling stars, and mosque silhouette
           Positioned.fill(
             child: CustomPaint(
               painter: _IslamicNightSkyPainter(
-                skyColorTop: const Color(0xFF02070D),
-                skyColorBottom: const Color(0xFF09241B),
-                mosqueSilhouetteColor: const Color(0xFF03130E).withValues(alpha: 0.95),
+                skyColorTop: const Color(0xFF01060B),
+                skyColorBottom: const Color(0xFF071F17),
+                mosqueSilhouetteColor: const Color(0xFF03130E).withValues(alpha: 0.96),
                 moonGold: const Color(0xFFFFD700),
               ),
             ),
           ),
 
-          // Optional subtle night sky backdrop image overlay with soft blending
+          // Safe asset loader with errorBuilder for user's background image
           Positioned.fill(
-            child: Image.network(
-              'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1080&q=80',
+            child: Image.asset(
+              'assets/images/background_night.png',
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-              color: const Color(0xFF041410).withValues(alpha: 0.75),
-              colorBlendMode: BlendMode.darken,
+              errorBuilder: (_, __, ___) => Image.network(
+                'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1080&q=80',
+                fit: BoxFit.cover,
+                color: const Color(0xFF03120E).withValues(alpha: 0.65),
+                colorBlendMode: BlendMode.darken,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              ),
             ),
           ),
 
-          // Top dark gradient protection for status bar readability
+          // Top subtle gradient to ensure perfect status-bar contrast
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            height: 180,
+            height: 140,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF02070D).withValues(alpha: 0.9),
+                    Colors.black.withValues(alpha: 0.85),
                     Colors.transparent,
                   ],
                 ),
@@ -74,28 +93,30 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // 2. MAIN SCROLLABLE CONTENT
+          // -------------------------------------------------------------
+          // 2. MAIN SCROLLABLE CONTENT (NO OLD CATEGORY LISTS)
+          // -------------------------------------------------------------
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // --- HEADER WITH SALAM & SETTINGS ---
+                  // --- TOP HEADER (GREETING & SETTINGS BUTTON) ---
                   _buildHeader(context, colors),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 16),
 
-                  // --- AYAH CARD (فَاذْكُرُونِي أَذْكُرْكُمْ) ---
+                  // --- AYAH CARD («فَاذْكُرُونِي أَذْكُرْكُمْ») ---
                   _buildAyahCard(context, colors),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // Section Title
+                  // --- SECTION HEADER ---
                   Row(
                     children: [
                       Container(
                         width: 4,
-                        height: 20,
+                        height: 18,
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFD700),
                           borderRadius: BorderRadius.circular(2),
@@ -103,10 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 8),
                       const Text(
-                        'ዋና ዋና የአዝካር ክፍሎች',
+                        'ዋና ዋና ክፍሎች',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 17,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.3,
                         ),
@@ -117,21 +138,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           color: const Color(0xFFD4AF37).withValues(alpha: 0.85),
                           fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
 
-                  // --- 4 MAIN CARDS (2x2 GRID) ---
+                  // --- STRICTLY 4 CARDS (2x2 GRID) ---
                   _build2x2CardsGrid(context, provider),
                   const SizedBox(height: 20),
-
-                  // Quick Tasbih shortcut banner if available
-                  if (widget.onOpenTasbih != null) ...[
-                    _buildTasbihBanner(context, provider),
-                    const SizedBox(height: 16),
-                  ],
                 ],
               ),
             ),
@@ -141,49 +157,48 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- HEADER WIDGET ---
+  // ===========================================================================
+  // TOP HEADER: GREETING & SETTINGS
+  // ===========================================================================
   Widget _buildHeader(BuildContext context, IslamicThemeColors colors) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Salam & Title Column
+        // Islamic Greeting Column
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00E676).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF00E676).withValues(alpha: 0.3),
-                        width: 0.8,
+              // Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00E676).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF00E676).withValues(alpha: 0.35),
+                    width: 0.8,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.brightness_2_rounded,
+                      size: 11,
+                      color: Color(0xFFFFD700),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      'ኑሩል አዝካር • Nur Azkar',
+                      style: TextStyle(
+                        color: const Color(0xFFFFD700).withValues(alpha: 0.95),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.brightness_2_rounded,
-                          size: 11,
-                          color: Color(0xFFFFD700),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'ኑሩል አዝካር • Nur Azkar',
-                          style: TextStyle(
-                            color: const Color(0xFFFFD700).withValues(alpha: 0.95),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 6),
               const Text(
@@ -192,22 +207,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.4,
+                  letterSpacing: 0.3,
                 ),
               ),
               Text(
                 'ወረሕመቱላሂ ወበረካቱህ',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.75),
+                  color: Colors.white.withValues(alpha: 0.72),
                   fontSize: 13,
-                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
         ),
 
-        // Settings / Theme Button
+        // Settings / Palette Action Button
         Material(
           color: Colors.transparent,
           child: InkWell(
@@ -216,15 +230,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF0E3025).withValues(alpha: 0.85),
+                color: const Color(0xFF0E3025).withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.45),
                   width: 1.2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: Colors.black.withValues(alpha: 0.35),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -242,11 +256,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- AYAH CARD (فَاذْكُرُونِي أَذْكُرْكُمْ) ---
+  // ===========================================================================
+  // AYAH CARD: «فَاذْكُرُونِي أَذْكُرْكُمْ»
+  // ===========================================================================
   Widget _buildAyahCard(BuildContext context, IslamicThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF08241C).withValues(alpha: 0.88),
+        color: const Color(0xFF08241C).withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0xFFD4AF37).withValues(alpha: 0.65),
@@ -254,13 +270,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFD4AF37).withValues(alpha: 0.14),
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
             blurRadius: 18,
             spreadRadius: 1,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: Colors.black.withValues(alpha: 0.55),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -270,13 +286,13 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(19),
         child: Stack(
           children: [
-            // Decorative subtle Islamic arch background pattern
+            // Decorative background mosque watermark
             Positioned(
-              right: -20,
-              bottom: -20,
+              right: -15,
+              bottom: -15,
               child: Icon(
                 Icons.mosque_rounded,
-                size: 130,
+                size: 120,
                 color: const Color(0xFFD4AF37).withValues(alpha: 0.05),
               ),
             ),
@@ -286,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Top Row: Bismillah & Tag
+                  // Top Row: Tag & Reference
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -312,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         'ሱረቱል በቀራህ ፡ 152',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Colors.white.withValues(alpha: 0.65),
                           fontSize: 11,
                         ),
                       ),
@@ -320,14 +336,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Arabic Ayah Text
+                  // Arabic Ayah
                   const Text(
                     '« فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ »',
                     textAlign: TextAlign.center,
                     textDirection: TextDirection.rtl,
                     style: TextStyle(
                       fontFamily: 'Amiri',
-                      fontSize: 22,
+                      fontSize: 21,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFFFFDE59),
                       height: 1.7,
@@ -342,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Divider line with small golden center star
+                  // Star Divider
                   Row(
                     children: [
                       Expanded(
@@ -389,9 +405,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- 4 MAIN CARDS (2x2 GRID) ---
+  // ===========================================================================
+  // 4 MAIN CARDS (STRICTLY 2x2 GRID - NO LISTS)
+  // ===========================================================================
   Widget _build2x2CardsGrid(BuildContext context, AzkarProvider provider) {
-    // Look up morning and evening categories dynamically
+    // Dynamic matching of morning and evening categories with robust fallbacks
     final morningCat = provider.categories.firstWhere(
       (c) => c.id.toLowerCase().contains('morning') || c.title.contains('ጠዋት') || c.title.contains('ጥዋት'),
       orElse: () => provider.categories.isNotEmpty ? provider.categories.first : _fallbackMorningCategory(),
@@ -419,12 +437,13 @@ class _HomeScreenState extends State<HomeScreen> {
           title: 'የጥዋት አዝካር',
           subtitle: 'የማለዳ ዚክሮች',
           badgeText: '$morningCount ዚክሮች',
-          imageUrl: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=600&q=80',
+          assetPath: 'assets/images/morning_bg.jpg',
+          networkFallbackUrl: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=600&q=80',
           icon: Icons.wb_sunny_rounded,
           iconColor: const Color(0xFFFFD54F),
           glowColor: const Color(0xFFFF9800),
           gradientColors: [
-            const Color(0xFF1B3B2B).withValues(alpha: 0.3),
+            const Color(0xFF1B3B2B).withValues(alpha: 0.35),
             const Color(0xFF041A13).withValues(alpha: 0.95),
           ],
           onTap: () {
@@ -443,12 +462,13 @@ class _HomeScreenState extends State<HomeScreen> {
           title: 'የማታ አዝካር',
           subtitle: 'የምሽት ዚክሮች',
           badgeText: '$eveningCount ዚክሮች',
-          imageUrl: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=600&q=80',
+          assetPath: 'assets/images/evening_bg.jpg',
+          networkFallbackUrl: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=600&q=80',
           icon: Icons.nightlight_round,
           iconColor: const Color(0xFF80D8FF),
           glowColor: const Color(0xFF00B0FF),
           gradientColors: [
-            const Color(0xFF0C243B).withValues(alpha: 0.3),
+            const Color(0xFF0C243B).withValues(alpha: 0.35),
             const Color(0xFF03141F).withValues(alpha: 0.95),
           ],
           onTap: () {
@@ -467,12 +487,13 @@ class _HomeScreenState extends State<HomeScreen> {
           title: '99 የአላህ ስሞች',
           subtitle: 'አስማኡል ሁስና',
           badgeText: '99 ስሞች',
-          imageUrl: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=600&q=80',
+          assetPath: 'assets/images/kaaba_bg.jpg',
+          networkFallbackUrl: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=600&q=80',
           icon: Icons.auto_awesome_rounded,
           iconColor: const Color(0xFFFFD700),
           glowColor: const Color(0xFFFFD700),
           gradientColors: [
-            const Color(0xFF282006).withValues(alpha: 0.3),
+            const Color(0xFF282006).withValues(alpha: 0.35),
             const Color(0xFF151004).withValues(alpha: 0.95),
           ],
           onTap: () {
@@ -485,19 +506,22 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
 
-        // CARD 4: "ይህ ተይዟል / Coming Soon" (Locked Card)
+        // CARD 4: "ይህ ተይዟል" / Coming Soon (Locked Card)
         _buildLockedCard(context),
       ],
     );
   }
 
-  // --- REUSABLE CARD WITH BACKGROUND IMAGE & GRADIENT ---
+  // ===========================================================================
+  // REUSABLE CARD WITH ASSET/PHOTO & GRADIENT OVERLAY
+  // ===========================================================================
   Widget _buildImageCard({
     required BuildContext context,
     required String title,
     required String subtitle,
     required String badgeText,
-    required String imageUrl,
+    required String assetPath,
+    required String networkFallbackUrl,
     required IconData icon,
     required Color iconColor,
     required Color glowColor,
@@ -528,48 +552,50 @@ class _HomeScreenState extends State<HomeScreen> {
             splashColor: const Color(0xFFFFD700).withValues(alpha: 0.2),
             child: Stack(
               children: [
-                // Background Photo
+                // 1. Background Photo: Attempts local asset first, then network fallback, then gradient
                 Positioned.fill(
-                  child: Image.network(
-                    imageUrl,
+                  child: Image.asset(
+                    assetPath,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: gradientColors,
+                    errorBuilder: (_, __, ___) => Image.network(
+                      networkFallbackUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: gradientColors,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
 
-                // Dark & Colored Gradient Overlay
+                // 2. Dark Tint & Contrast Gradient
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        stops: const [0.0, 0.45, 1.0],
                         colors: [
-                          Colors.transparent,
-                          gradientColors[0],
-                          gradientColors[1],
+                          Colors.black.withValues(alpha: 0.2),
+                          const Color(0xFF030E0A).withValues(alpha: 0.88),
                         ],
                       ),
                     ),
                   ),
                 ),
 
-                // Card Content (Badge, Icon, Title, Subtitle)
+                // 3. Card Typography & Badges
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Top Row: Icon with glowing circle + count badge
+                      // Top Row: Icon + Badge
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -577,14 +603,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF03100B).withValues(alpha: 0.85),
+                              color: const Color(0xFF071F17).withValues(alpha: 0.85),
                               border: Border.all(
-                                color: iconColor.withValues(alpha: 0.6),
+                                color: iconColor.withValues(alpha: 0.5),
                                 width: 1.2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: glowColor.withValues(alpha: 0.35),
+                                  color: glowColor.withValues(alpha: 0.25),
                                   blurRadius: 8,
                                 ),
                               ],
@@ -594,7 +620,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.7),
+                              color: Colors.black.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 color: Colors.white.withValues(alpha: 0.2),
@@ -664,7 +690,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- CARD 4: "ይህ ተይዟል / Coming Soon" (LOCKED CARD) ---
+  // ===========================================================================
+  // CARD 4: "ይህ ተይዟል" / Coming Soon (LOCKED CARD)
+  // ===========================================================================
   Widget _buildLockedCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -690,7 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
             splashColor: const Color(0xFFFFD700).withValues(alpha: 0.1),
             child: Stack(
               children: [
-                // Frosted mesh background
+                // Frosted gradient background
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -749,38 +777,30 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: const Color(0xFFB71C1C).withValues(alpha: 0.25),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: const Color(0xFFE57373).withValues(alpha: 0.4),
-                                width: 0.6,
+                                color: const Color(0xFFEF5350).withValues(alpha: 0.4),
+                                width: 0.8,
                               ),
                             ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'የተቆለፈ',
-                                  style: TextStyle(
-                                    color: Color(0xFFFF8A80),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            child: const Text(
+                              'ይህ ተይዟል',
+                              style: TextStyle(
+                                color: Color(0xFFFF8A80),
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
                       ),
                       const Spacer(),
 
-                      // Title
+                      // Title & Subtitle
                       const Text(
-                        'ይህ ተይዟል',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        'በቅርቡ...',
                         style: TextStyle(
-                          color: Color(0xFFE0E0E0),
+                          color: Color(0xFFD0D7D4),
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 0.2,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -788,11 +808,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              'Coming Soon • በቅርቡ',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              'ሩቅያህና ተጨማሪ',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.55),
+                                color: Colors.white.withValues(alpha: 0.5),
                                 fontSize: 11,
                               ),
                             ),
@@ -815,55 +833,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- FAST TASBIH SHORTCUT BANNER ---
-  Widget _buildTasbihBanner(BuildContext context, AzkarProvider provider) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF0A2B20).withValues(alpha: 0.75),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF00E676).withValues(alpha: 0.25),
-          width: 1,
-        ),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFD700).withValues(alpha: 0.15),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: const Color(0xFFFFD700).withValues(alpha: 0.4),
-              width: 1,
-            ),
-          ),
-          child: const Icon(Icons.touch_app_rounded, color: Color(0xFFFFD700), size: 22),
-        ),
-        title: const Text(
-          'ፈጣን ተስቢሕ ቆጣሪ',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        subtitle: Text(
-          'ሱብሓነላህ • ዒላማ: ${provider.tasbihTarget} | የተቆጠረ: ${provider.tasbihTotal}',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11),
-        ),
-        trailing: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFFD700),
-            foregroundColor: Colors.black,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            elevation: 0,
-          ),
-          onPressed: widget.onOpenTasbih,
-          child: const Text('ክፈት', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-        ),
-      ),
-    );
-  }
-
-  // --- BOTTOM SHEET FOR "COMING SOON" ---
+  // ===========================================================================
+  // BOTTOM SHEET MODAL: EXPLANATION FOR "ይህ ተይዟል / COMING SOON"
+  // ===========================================================================
   void _showComingSoonBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -946,7 +918,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- 5-ITEM BOTTOM NAVIGATION BAR ---
+  // ===========================================================================
+  // 5-ITEM BOTTOM NAVIGATION BAR
+  // ===========================================================================
   Widget _buildBottomNav(BuildContext context, IslamicThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
@@ -971,6 +945,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              // 1. መነሻ (Home)
               _buildNavItem(
                 index: 0,
                 icon: Icons.home_rounded,
@@ -978,50 +953,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 isSelected: _navIndex == 0,
                 onTap: () => setState(() => _navIndex = 0),
               ),
+              // 2. ዱዓዎች (Duas)
               _buildNavItem(
                 index: 1,
                 icon: Icons.menu_book_rounded,
-                label: 'አዝካር',
+                label: 'ዱዓዎች',
                 isSelected: _navIndex == 1,
                 onTap: () {
                   setState(() => _navIndex = 1);
-                  final provider = context.read<AzkarProvider>();
-                  if (provider.categories.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AzkarListScreen(category: provider.categories.first),
-                      ),
-                    ).then((_) => setState(() => _navIndex = 0));
-                  }
-                },
-              ),
-              _buildNavItem(
-                index: 2,
-                icon: Icons.favorite_rounded,
-                label: 'ጸሎት',
-                isSelected: _navIndex == 2,
-                onTap: () {
-                  setState(() => _navIndex = 2);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const DuasScreen()),
                   ).then((_) => setState(() => _navIndex = 0));
                 },
               ),
+              // 3. ተስቢሕ (Tasbih)
+              _buildNavItem(
+                index: 2,
+                icon: Icons.touch_app_rounded,
+                label: 'ተስቢሕ',
+                isSelected: _navIndex == 2,
+                onTap: () {
+                  if (widget.onOpenTasbih != null) {
+                    widget.onOpenTasbih!();
+                  } else {
+                    setState(() => _navIndex = 2);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Scaffold(
+                          appBar: AppBar(title: const Text('ተስቢሕ (ዲጂታል ቆጣሪ)')),
+                          body: const DuasScreen(), // fallback
+                        ),
+                      ),
+                    ).then((_) => setState(() => _navIndex = 0));
+                  }
+                },
+              ),
+              // 4. 99 ስሞች (99 Names)
               _buildNavItem(
                 index: 3,
-                icon: Icons.star_rounded,
-                label: 'ተወዳጆች',
+                icon: Icons.auto_awesome_rounded,
+                label: '99 ስሞች',
                 isSelected: _navIndex == 3,
                 onTap: () {
                   setState(() => _navIndex = 3);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                    MaterialPageRoute(builder: (_) => const NamesOfAllahScreen()),
                   ).then((_) => setState(() => _navIndex = 0));
                 },
               ),
+              // 5. ቅንብር (Settings)
               _buildNavItem(
                 index: 4,
                 icon: Icons.settings_rounded,
@@ -1045,7 +1028,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final activeColor = const Color(0xFFFFD700);
+    const activeColor = Color(0xFFFFD700);
     final inactiveColor = Colors.white.withValues(alpha: 0.5);
 
     return InkWell(
@@ -1076,7 +1059,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Fallbacks if categories are empty during initial load
+  // Safe Fallback Categories
   static AzkarCategory _fallbackMorningCategory() {
     return AzkarCategory(
       id: 'morning',
@@ -1099,7 +1082,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // ============================================================================
-// CUSTOM PAINTER: FULL-SCREEN NIGHT SKY, STARS, CRESCENT MOON & MOSQUE DOMES
+// CUSTOM PAINTER: FULL-SCREEN NIGHT SKY, STARS, CRESCENT MOON & MOSQUE SILHOUETTE
 // ============================================================================
 class _IslamicNightSkyPainter extends CustomPainter {
   final Color skyColorTop;
@@ -1126,7 +1109,7 @@ class _IslamicNightSkyPainter extends CustomPainter {
       ).createShader(rect);
     canvas.drawRect(rect, skyPaint);
 
-    // 2. Stars
+    // 2. Twinkling Stars
     final Paint starPaint = Paint()..color = Colors.white.withValues(alpha: 0.75);
     final List<Offset> stars = [
       Offset(size.width * 0.10, size.height * 0.07),
@@ -1186,7 +1169,7 @@ class _IslamicNightSkyPainter extends CustomPainter {
     // Left Minaret
     mosquePath.lineTo(size.width * 0.07, roofY + 25);
     mosquePath.lineTo(size.width * 0.07, roofY - 45);
-    mosquePath.lineTo(size.width * 0.09, roofY - 65); // spire
+    mosquePath.lineTo(size.width * 0.09, roofY - 65);
     mosquePath.lineTo(size.width * 0.11, roofY - 45);
     mosquePath.lineTo(size.width * 0.11, roofY + 25);
 
@@ -1201,7 +1184,7 @@ class _IslamicNightSkyPainter extends CustomPainter {
     // Right Minaret
     mosquePath.lineTo(size.width * 0.85, roofY + 25);
     mosquePath.lineTo(size.width * 0.85, roofY - 55);
-    mosquePath.lineTo(size.width * 0.87, roofY - 75); // spire
+    mosquePath.lineTo(size.width * 0.87, roofY - 75);
     mosquePath.lineTo(size.width * 0.89, roofY - 55);
     mosquePath.lineTo(size.width * 0.89, roofY + 25);
 

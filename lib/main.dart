@@ -74,7 +74,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Azkar & Dua • ኑሩል አዝካር', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(provider.currentTheme.titleAm, style: TextStyle(fontSize: 11, color: colors.goldAccent)),
+            Text(
+              (provider.currentTheme is AppThemeMode)
+                  ? provider.currentTheme.titleAm
+                  : 'የተመረጠ ገጽታ',
+              style: TextStyle(fontSize: 11, color: colors.goldAccent),
+            ),
           ],
         ),
         actions: [
