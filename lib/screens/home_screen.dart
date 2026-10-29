@@ -7,19 +7,23 @@ import '../widgets/theme_dialog.dart';
 import 'azkar_list_screen.dart';
 import 'duas_screen.dart';
 import 'names_screen.dart';
-import 'favorites_screen.dart';
 
-/// HomePage: Fully customized Islamic Azkar & Dua home screen
+/// HomePage: Modern, vibrant, and clean Light Theme Islamic Azkar & Dua home screen
 /// Features:
-/// 1. Full-screen night sky and mosque silhouette background using Stack & CustomPainter.
-/// 2. Header with Islamic greeting, badge, and settings button.
-/// 3. Ayah Card («فَاذْكُرُونِي أَذْكُرْكُمْ») with decorative Islamic borders.
-/// 4. Strict 2x2 Grid with ONLY 4 main cards (Morning Azkar, Evening Azkar, 99 Names, Locked Coming Soon).
-/// 5. 5-item bottom navigation bar for quick access.
+/// 1. Light & Bright Islamic Theme: Crisp off-white background with elegant soft emerald and gold accents.
+/// 2. Single Navigation Bar: Nested bottom navigation is disabled by default when hosted in MainNavigationScreen.
+/// 3. Header: Islamic greeting in rich dark emerald green with a gold badge and settings button.
+/// 4. Ayah Card: Pristine white card with gold border and deep emerald Arabic calligraphy («فَاذْكُرُونِي أَذْكُرْكُمْ»).
+/// 5. Strict 2x2 Grid: ONLY 4 main cards (Morning Azkar, Evening Azkar, 99 Names, Locked Coming Soon).
 class HomePage extends StatefulWidget {
   final VoidCallback? onOpenTasbih;
+  final bool showBottomNav;
 
-  const HomePage({super.key, this.onOpenTasbih});
+  const HomePage({
+    super.key,
+    this.onOpenTasbih,
+    this.showBottomNav = false,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -27,7 +31,11 @@ class HomePage extends StatefulWidget {
 
 /// Backwards compatibility alias for existing project navigators
 class HomeScreen extends HomePage {
-  const HomeScreen({super.key, super.onOpenTasbih});
+  const HomeScreen({
+    super.key,
+    super.onOpenTasbih,
+    super.showBottomNav = false,
+  });
 }
 
 class _HomePageState extends State<HomePage> {
@@ -39,53 +47,53 @@ class _HomePageState extends State<HomePage> {
     final colors = IslamicThemeColors.fromMode(provider.currentTheme);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF030D12),
-      bottomNavigationBar: _buildBottomNav(context, colors),
+      backgroundColor: const Color(0xFFF7F9F7),
+      // Only show inner bottom nav if explicitly requested (prevents duplicate navigation bar)
+      bottomNavigationBar: widget.showBottomNav ? _buildBottomNav(context, colors) : null,
       body: Stack(
         children: [
           // -------------------------------------------------------------
-          // 1. FULL-SCREEN NIGHT ATMOSPHERE & MOSQUE BACKGROUND
+          // 1. LIGHT & BRIGHT BACKGROUND WITH SUBTLE ISLAMIC ART MOTIFS
           // -------------------------------------------------------------
-          // Custom Canvas: Deep night sky, glowing crescent, twinkling stars, and mosque silhouette
           Positioned.fill(
             child: CustomPaint(
-              painter: _IslamicNightSkyPainter(
-                skyColorTop: const Color(0xFF01060B),
-                skyColorBottom: const Color(0xFF071F17),
-                mosqueSilhouetteColor: const Color(0xFF03130E).withValues(alpha: 0.96),
-                moonGold: const Color(0xFFFFD700),
+              painter: _IslamicLightAtmospherePainter(
+                bgColorTop: const Color(0xFFFCFDFC),
+                bgColorBottom: const Color(0xFFEEF5F0),
+                accentGold: const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                accentGreen: const Color(0xFF0F5132).withValues(alpha: 0.06),
               ),
             ),
           ),
 
-          // Safe asset loader with errorBuilder for user's background image
+          // Safe asset loader with errorBuilder for optional custom background
           Positioned.fill(
             child: Image.asset(
-              'assets/images/background_night.png',
+              'assets/images/background_light.png',
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Image.network(
-                'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1080&q=80',
+                'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1080&q=80',
                 fit: BoxFit.cover,
-                color: const Color(0xFF03120E).withValues(alpha: 0.65),
-                colorBlendMode: BlendMode.darken,
+                color: Colors.white.withValues(alpha: 0.92),
+                colorBlendMode: BlendMode.screen,
                 errorBuilder: (_, __, ___) => const SizedBox.shrink(),
               ),
             ),
           ),
 
-          // Top subtle gradient to ensure perfect status-bar contrast
+          // Top subtle ambient glow to ensure perfect readability
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            height: 140,
+            height: 120,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.85),
+                    Colors.white.withValues(alpha: 0.8),
                     Colors.transparent,
                   ],
                 ),
@@ -94,12 +102,12 @@ class _HomePageState extends State<HomePage> {
           ),
 
           // -------------------------------------------------------------
-          // 2. MAIN SCROLLABLE CONTENT (NO OLD CATEGORY LISTS)
+          // 2. MAIN SCROLLABLE CONTENT (LIGHT THEME)
           // -------------------------------------------------------------
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -118,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                         width: 4,
                         height: 18,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFD700),
+                          color: const Color(0xFFC59B27),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -126,28 +134,28 @@ class _HomePageState extends State<HomePage> {
                       const Text(
                         'ዋና ዋና ክፍሎች',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF0C3B2E),
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.2,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         'ዕለታዊ ዚክሮች',
                         style: TextStyle(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.85),
+                          color: const Color(0xFF8C6D1F),
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
 
-                  // --- STRICTLY 4 CARDS (2x2 GRID) ---
+                  // --- STRICTLY 4 CARDS (2x2 GRID IN LIGHT THEME) ---
                   _build2x2CardsGrid(context, provider),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -158,11 +166,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // TOP HEADER: GREETING & SETTINGS
+  // TOP HEADER: GREETING & SETTINGS (LIGHT THEME)
   // ===========================================================================
   Widget _buildHeader(BuildContext context, IslamicThemeColors colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Islamic Greeting Column
         Expanded(
@@ -171,30 +180,30 @@ class _HomePageState extends State<HomePage> {
             children: [
               // Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00E676).withValues(alpha: 0.12),
+                  color: const Color(0xFFE8F5E9),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF00E676).withValues(alpha: 0.35),
-                    width: 0.8,
+                    color: const Color(0xFFA5D6A7),
+                    width: 0.9,
                   ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.brightness_2_rounded,
-                      size: 11,
-                      color: Color(0xFFFFD700),
+                  children: const [
+                    Icon(
+                      Icons.brightness_5_rounded,
+                      size: 12,
+                      color: Color(0xFFC59B27),
                     ),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     Text(
                       'ኑሩል አዝካር • Nur Azkar',
                       style: TextStyle(
-                        color: const Color(0xFFFFD700).withValues(alpha: 0.95),
+                        color: Color(0xFF0F5132),
                         fontSize: 11,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -204,17 +213,18 @@ class _HomePageState extends State<HomePage> {
               const Text(
                 'አሰላሙ ዐለይኩም',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF0C3B2E),
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.3,
+                  letterSpacing: 0.2,
                 ),
               ),
-              Text(
+              const Text(
                 'ወረሕመቱላሂ ወበረካቱህ',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.72),
+                  color: Color(0xFF386650),
                   fontSize: 13,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -230,23 +240,23 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF0E3025).withValues(alpha: 0.9),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.45),
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
                   width: 1.2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.35),
-                    blurRadius: 8,
+                    color: const Color(0xFF0C3B2E).withValues(alpha: 0.08),
+                    blurRadius: 10,
                     offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: const Icon(
-                Icons.settings_rounded,
-                color: Color(0xFFFFD700),
+                Icons.settings_suggest_rounded,
+                color: Color(0xFFC59B27),
                 size: 22,
               ),
             ),
@@ -257,28 +267,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // AYAH CARD: «فَاذْكُرُونِي أَذْكُرْكُمْ»
+  // AYAH CARD: «فَاذْكُرُونِي أَذْكُرْكُمْ» (LIGHT & BRIGHT)
   // ===========================================================================
   Widget _buildAyahCard(BuildContext context, IslamicThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF08241C).withValues(alpha: 0.92),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFFD4AF37).withValues(alpha: 0.65),
-          width: 1.5,
+          color: const Color(0xFFD4AF37),
+          width: 1.4,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
-            blurRadius: 18,
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.16),
+            blurRadius: 14,
             spreadRadius: 1,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.55),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: const Color(0xFF0C3B2E).withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -286,14 +296,14 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(19),
         child: Stack(
           children: [
-            // Decorative background mosque watermark
+            // Decorative background mosque watermark in soft gold
             Positioned(
-              right: -15,
+              right: -10,
               bottom: -15,
               child: Icon(
                 Icons.mosque_rounded,
-                size: 120,
-                color: const Color(0xFFD4AF37).withValues(alpha: 0.05),
+                size: 110,
+                color: const Color(0xFFD4AF37).withValues(alpha: 0.08),
               ),
             ),
 
@@ -309,27 +319,28 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                          color: const Color(0xFFFFF9E6),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: const Color(0xFFD4AF37).withValues(alpha: 0.35),
-                            width: 0.8,
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                            width: 0.9,
                           ),
                         ),
                         child: const Text(
                           '📖 የዕለቱ የቁርኣን አንቀጽ',
                           style: TextStyle(
-                            color: Color(0xFFFFD700),
+                            color: Color(0xFF8C6D1F),
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      Text(
+                      const Text(
                         'ሱረቱል በቀራህ ፡ 152',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.65),
+                          color: Color(0xFF4A6B5D),
                           fontSize: 11,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -345,15 +356,9 @@ class _HomePageState extends State<HomePage> {
                       fontFamily: 'Amiri',
                       fontSize: 21,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFFFDE59),
+                      color: Color(0xFF0A3E2F),
                       height: 1.7,
                       letterSpacing: 0.5,
-                      shadows: [
-                        Shadow(
-                          color: Color(0x66FFDE59),
-                          blurRadius: 10,
-                        ),
-                      ],
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -363,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Expanded(
                         child: Divider(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+                          color: const Color(0xFFD4AF37).withValues(alpha: 0.45),
                           thickness: 1,
                         ),
                       ),
@@ -371,13 +376,13 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Icon(
                           Icons.star_rounded,
-                          size: 14,
-                          color: const Color(0xFFFFD700).withValues(alpha: 0.75),
+                          size: 15,
+                          color: const Color(0xFFC59B27),
                         ),
                       ),
                       Expanded(
                         child: Divider(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+                          color: const Color(0xFFD4AF37).withValues(alpha: 0.45),
                           thickness: 1,
                         ),
                       ),
@@ -390,9 +395,9 @@ class _HomePageState extends State<HomePage> {
                     '«አስታውሱኝ፤ አስታውሳችኋለሁና። አመስግኑኝም፤ አትካዱኝም።»',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFFE4F4EC),
+                      color: Color(0xFF1E3A2F),
                       fontSize: 13.5,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 1.5,
                     ),
                   ),
@@ -406,7 +411,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // 4 MAIN CARDS (STRICTLY 2x2 GRID - NO LISTS)
+  // 4 MAIN CARDS (STRICTLY 2x2 GRID - LIGHT THEME)
   // ===========================================================================
   Widget _build2x2CardsGrid(BuildContext context, AzkarProvider provider) {
     // Dynamic matching of morning and evening categories with robust fallbacks
@@ -440,12 +445,8 @@ class _HomePageState extends State<HomePage> {
           assetPath: 'assets/images/morning_bg.jpg',
           networkFallbackUrl: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=600&q=80',
           icon: Icons.wb_sunny_rounded,
-          iconColor: const Color(0xFFFFD54F),
-          glowColor: const Color(0xFFFF9800),
-          gradientColors: [
-            const Color(0xFF1B3B2B).withValues(alpha: 0.35),
-            const Color(0xFF041A13).withValues(alpha: 0.95),
-          ],
+          iconColor: const Color(0xFFE68A00),
+          iconBgColor: const Color(0xFFFFF8E1),
           onTap: () {
             Navigator.push(
               context,
@@ -465,12 +466,8 @@ class _HomePageState extends State<HomePage> {
           assetPath: 'assets/images/evening_bg.jpg',
           networkFallbackUrl: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=600&q=80',
           icon: Icons.nightlight_round,
-          iconColor: const Color(0xFF80D8FF),
-          glowColor: const Color(0xFF00B0FF),
-          gradientColors: [
-            const Color(0xFF0C243B).withValues(alpha: 0.35),
-            const Color(0xFF03141F).withValues(alpha: 0.95),
-          ],
+          iconColor: const Color(0xFF0277BD),
+          iconBgColor: const Color(0xFFE1F5FE),
           onTap: () {
             Navigator.push(
               context,
@@ -490,12 +487,8 @@ class _HomePageState extends State<HomePage> {
           assetPath: 'assets/images/kaaba_bg.jpg',
           networkFallbackUrl: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=600&q=80',
           icon: Icons.auto_awesome_rounded,
-          iconColor: const Color(0xFFFFD700),
-          glowColor: const Color(0xFFFFD700),
-          gradientColors: [
-            const Color(0xFF282006).withValues(alpha: 0.35),
-            const Color(0xFF151004).withValues(alpha: 0.95),
-          ],
+          iconColor: const Color(0xFFC59B27),
+          iconBgColor: const Color(0xFFFFF9C4),
           onTap: () {
             Navigator.push(
               context,
@@ -513,7 +506,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // REUSABLE CARD WITH ASSET/PHOTO & GRADIENT OVERLAY
+  // REUSABLE CARD WITH ASSET/PHOTO & LIGHT-THEME GLASS OVERLAY
   // ===========================================================================
   Widget _buildImageCard({
     required BuildContext context,
@@ -524,20 +517,20 @@ class _HomePageState extends State<HomePage> {
     required String networkFallbackUrl,
     required IconData icon,
     required Color iconColor,
-    required Color glowColor,
-    required List<Color> gradientColors,
+    required Color iconBgColor,
     required VoidCallback onTap,
   }) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFD4AF37).withValues(alpha: 0.45),
+          color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: const Color(0xFF0C3B2E).withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -546,13 +539,13 @@ class _HomePageState extends State<HomePage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(17),
         child: Material(
-          color: const Color(0xFF081C15),
+          color: Colors.white,
           child: InkWell(
             onTap: onTap,
-            splashColor: const Color(0xFFFFD700).withValues(alpha: 0.2),
+            splashColor: const Color(0xFFD4AF37).withValues(alpha: 0.15),
             child: Stack(
               children: [
-                // 1. Background Photo: Attempts local asset first, then network fallback, then gradient
+                // 1. Background Photo: Attempts local asset first, then network fallback
                 Positioned.fill(
                   child: Image.asset(
                     assetPath,
@@ -561,11 +554,11 @@ class _HomePageState extends State<HomePage> {
                       networkFallbackUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: gradientColors,
+                            colors: [Color(0xFFE8F5E9), Color(0xFFFFF8E1)],
                           ),
                         ),
                       ),
@@ -573,7 +566,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                // 2. Dark Tint & Contrast Gradient
+                // 2. Light Tint & Contrast Gradient (Bright, crisp frosted bottom for high text legibility)
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -581,9 +574,11 @@ class _HomePageState extends State<HomePage> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withValues(alpha: 0.2),
-                          const Color(0xFF030E0A).withValues(alpha: 0.88),
+                          Colors.white.withValues(alpha: 0.20),
+                          Colors.white.withValues(alpha: 0.92),
+                          Colors.white,
                         ],
+                        stops: const [0.0, 0.65, 1.0],
                       ),
                     ),
                   ),
@@ -600,37 +595,43 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF071F17).withValues(alpha: 0.85),
+                              color: iconBgColor,
                               border: Border.all(
                                 color: iconColor.withValues(alpha: 0.5),
                                 width: 1.2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: glowColor.withValues(alpha: 0.25),
-                                  blurRadius: 8,
+                                  color: iconColor.withValues(alpha: 0.2),
+                                  blurRadius: 6,
                                 ),
                               ],
                             ),
-                            child: Icon(icon, size: 20, color: iconColor),
+                            child: Icon(icon, size: 18, color: iconColor),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                width: 0.6,
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.6),
+                                width: 0.8,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
                             child: Text(
                               badgeText,
                               style: const TextStyle(
-                                color: Color(0xFFFFD700),
+                                color: Color(0xFF8C6D1F),
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -640,22 +641,16 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const Spacer(),
 
-                      // Title & Subtitle
+                      // Title & Subtitle in crisp dark emerald
                       Text(
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF0C3B2E),
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.2,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black,
-                              blurRadius: 4,
-                            ),
-                          ],
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -666,16 +661,17 @@ class _HomePageState extends State<HomePage> {
                               subtitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.75),
+                              style: const TextStyle(
+                                color: Color(0xFF476859),
                                 fontSize: 11,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 11,
-                            color: const Color(0xFFFFD700).withValues(alpha: 0.8),
+                            color: Color(0xFFC59B27),
                           ),
                         ],
                       ),
@@ -691,34 +687,35 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // CARD 4: "ይህ ተይዟል" / Coming Soon (LOCKED CARD)
+  // CARD 4: "ይህ ተይዟል" / Coming Soon (LOCKED CARD - LIGHT THEME)
   // ===========================================================================
   Widget _buildLockedCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+          color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF0C3B2E).withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(17),
         child: Material(
-          color: const Color(0xFF071510),
+          color: const Color(0xFFFAFBFA),
           child: InkWell(
             onTap: () => _showComingSoonBottomSheet(context),
-            splashColor: const Color(0xFFFFD700).withValues(alpha: 0.1),
+            splashColor: const Color(0xFFD4AF37).withValues(alpha: 0.1),
             child: Stack(
               children: [
-                // Frosted gradient background
+                // Soft background gradient
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -726,8 +723,8 @@ class _HomePageState extends State<HomePage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          const Color(0xFF0F261E).withValues(alpha: 0.8),
-                          const Color(0xFF06140F).withValues(alpha: 0.95),
+                          Colors.white,
+                          const Color(0xFFF3F7F4),
                         ],
                       ),
                     ),
@@ -741,7 +738,7 @@ class _HomePageState extends State<HomePage> {
                   child: Icon(
                     Icons.lock_outline_rounded,
                     size: 90,
-                    color: Colors.white.withValues(alpha: 0.04),
+                    color: const Color(0xFF0C3B2E).withValues(alpha: 0.04),
                   ),
                 ),
 
@@ -756,35 +753,35 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF1E2823),
+                              color: const Color(0xFFFFF9E6),
                               border: Border.all(
-                                color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.6),
                                 width: 1.2,
                               ),
                             ),
                             child: const Icon(
                               Icons.lock_rounded,
-                              size: 20,
-                              color: Color(0xFFFFD700),
+                              size: 18,
+                              color: Color(0xFFC59B27),
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFB71C1C).withValues(alpha: 0.25),
+                              color: const Color(0xFFFFEBEE),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: const Color(0xFFEF5350).withValues(alpha: 0.4),
+                                color: const Color(0xFFEF9A9A),
                                 width: 0.8,
                               ),
                             ),
                             child: const Text(
                               'ይህ ተይዟል',
                               style: TextStyle(
-                                color: Color(0xFFFF8A80),
+                                color: Color(0xFFC62828),
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -794,31 +791,32 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const Spacer(),
 
-                      // Title & Subtitle
+                      // Title & Subtitle in dark slate
                       const Text(
                         'በቅርቡ...',
                         style: TextStyle(
-                          color: Color(0xFFD0D7D4),
+                          color: Color(0xFF263238),
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Row(
-                        children: [
+                        children: const [
                           Expanded(
                             child: Text(
                               'ሩቅያህና ተጨማሪ',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: Color(0xFF546E7A),
                                 fontSize: 11,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
                           Icon(
                             Icons.info_outline_rounded,
                             size: 13,
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: Color(0xFF78909C),
                           ),
                         ],
                       ),
@@ -834,12 +832,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // BOTTOM SHEET MODAL: EXPLANATION FOR "ይህ ተይዟል / COMING SOON"
+  // BOTTOM SHEET MODAL: EXPLANATION FOR "ይህ ተይዟል / COMING SOON" (LIGHT THEME)
   // ===========================================================================
   void _showComingSoonBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF071F17),
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -854,7 +852,7 @@ class _HomePageState extends State<HomePage> {
                   width: 42,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -862,13 +860,13 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0D3528),
+                    color: const Color(0xFFFFF9E6),
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+                    border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
                   ),
                   child: const Icon(
                     Icons.lock_clock_rounded,
-                    color: Color(0xFFFFD700),
+                    color: Color(0xFFC59B27),
                     size: 36,
                   ),
                 ),
@@ -876,17 +874,17 @@ class _HomePageState extends State<HomePage> {
                 const Text(
                   'ይህ ክፍል በቅርቡ ይከፈታል!',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF0C3B2E),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'በቀጣዩ የአፕሊኬሽኑ ዝመና (Update) ላይ ሩቅያህ ሸሪዓ (Ruqyah Shari\'ah)፣ የረመዳን ልዩ አዝካሮች እና የተመረጡ የቁርኣን ድምፅ ንባቦች ይካተታሉ።',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: Color(0xFF37474F),
                     fontSize: 13,
                     height: 1.5,
                   ),
@@ -896,12 +894,13 @@ class _HomePageState extends State<HomePage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFD700),
-                      foregroundColor: Colors.black,
+                      backgroundColor: const Color(0xFF0F5132),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
                     ),
                     onPressed: () => Navigator.pop(ctx),
                     child: const Text(
@@ -919,12 +918,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   // ===========================================================================
-  // 5-ITEM BOTTOM NAVIGATION BAR
+  // 5-ITEM BOTTOM NAVIGATION BAR (LIGHT THEME - OPTIONAL STANDALONE)
   // ===========================================================================
   Widget _buildBottomNav(BuildContext context, IslamicThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF03100B),
+        color: Colors.white,
         border: Border(
           top: BorderSide(
             color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
@@ -933,8 +932,8 @@ class _HomePageState extends State<HomePage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.7),
-            blurRadius: 12,
+            color: const Color(0xFF0C3B2E).withValues(alpha: 0.08),
+            blurRadius: 10,
             offset: const Offset(0, -2),
           ),
         ],
@@ -983,7 +982,7 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                         builder: (_) => Scaffold(
                           appBar: AppBar(title: const Text('ተስቢሕ (ዲጂታል ቆጣሪ)')),
-                          body: const DuasScreen(), // fallback
+                          body: const DuasScreen(),
                         ),
                       ),
                     ).then((_) => setState(() => _navIndex = 0));
@@ -1007,7 +1006,7 @@ class _HomePageState extends State<HomePage> {
               // 5. ቅንብር (Settings)
               _buildNavItem(
                 index: 4,
-                icon: Icons.settings_rounded,
+                icon: Icons.palette_outlined,
                 label: 'ቅንብር',
                 isSelected: _navIndex == 4,
                 onTap: () {
@@ -1028,8 +1027,8 @@ class _HomePageState extends State<HomePage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    const activeColor = Color(0xFFFFD700);
-    final inactiveColor = Colors.white.withValues(alpha: 0.5);
+    const activeColor = Color(0xFF0F5132);
+    final inactiveColor = const Color(0xFF607D8B).withValues(alpha: 0.8);
 
     return InkWell(
       onTap: onTap,
@@ -1082,120 +1081,77 @@ class _HomePageState extends State<HomePage> {
 }
 
 // ============================================================================
-// CUSTOM PAINTER: FULL-SCREEN NIGHT SKY, STARS, CRESCENT MOON & MOSQUE SILHOUETTE
+// CUSTOM PAINTER: LIGHT ISLAMIC ATMOSPHERE & GEOMETRIC ARCH EMBELLISHMENT
 // ============================================================================
-class _IslamicNightSkyPainter extends CustomPainter {
-  final Color skyColorTop;
-  final Color skyColorBottom;
-  final Color mosqueSilhouetteColor;
-  final Color moonGold;
+class _IslamicLightAtmospherePainter extends CustomPainter {
+  final Color bgColorTop;
+  final Color bgColorBottom;
+  final Color accentGold;
+  final Color accentGreen;
 
-  _IslamicNightSkyPainter({
-    required this.skyColorTop,
-    required this.skyColorBottom,
-    required this.mosqueSilhouetteColor,
-    required this.moonGold,
+  _IslamicLightAtmospherePainter({
+    required this.bgColorTop,
+    required this.bgColorBottom,
+    required this.accentGold,
+    required this.accentGreen,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 1. Sky Gradient
+    // 1. Soft Warm Gradient Background
     final Rect rect = Offset.zero & size;
-    final Paint skyPaint = Paint()
+    final Paint bgPaint = Paint()
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [skyColorTop, skyColorBottom],
+        colors: [bgColorTop, bgColorBottom],
       ).createShader(rect);
-    canvas.drawRect(rect, skyPaint);
+    canvas.drawRect(rect, bgPaint);
 
-    // 2. Twinkling Stars
-    final Paint starPaint = Paint()..color = Colors.white.withValues(alpha: 0.75);
-    final List<Offset> stars = [
-      Offset(size.width * 0.10, size.height * 0.07),
-      Offset(size.width * 0.22, size.height * 0.12),
-      Offset(size.width * 0.35, size.height * 0.05),
-      Offset(size.width * 0.52, size.height * 0.09),
-      Offset(size.width * 0.68, size.height * 0.04),
-      Offset(size.width * 0.88, size.height * 0.14),
-      Offset(size.width * 0.16, size.height * 0.20),
-      Offset(size.width * 0.42, size.height * 0.18),
-      Offset(size.width * 0.60, size.height * 0.23),
-      Offset(size.width * 0.82, size.height * 0.22),
-      Offset(size.width * 0.94, size.height * 0.28),
-      Offset(size.width * 0.06, size.height * 0.32),
-      Offset(size.width * 0.74, size.height * 0.35),
-    ];
-    for (int i = 0; i < stars.length; i++) {
-      final double radius = (i % 3 == 0) ? 1.6 : 1.1;
-      canvas.drawCircle(stars[i], radius, starPaint);
-    }
-
-    // 3. Glowing Crescent Moon in the upper sky
-    final double moonX = size.width * 0.84;
-    final double moonY = size.height * 0.09;
-    final double moonRadius = 22.0;
-
-    // Glowing aura
-    final Paint glowPaint = Paint()
-      ..color = moonGold.withValues(alpha: 0.2)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
-    canvas.drawCircle(Offset(moonX, moonY), moonRadius + 6, glowPaint);
-
-    // Crescent Path
-    final Path moonPath = Path()
-      ..addOval(Rect.fromCircle(center: Offset(moonX, moonY), radius: moonRadius));
-    final Path cutout = Path()
-      ..addOval(Rect.fromCircle(center: Offset(moonX - 8, moonY - 4), radius: moonRadius - 2));
-    final Path crescent = Path.combine(PathOperation.difference, moonPath, cutout);
-
-    final Paint crescentPaint = Paint()
-      ..color = moonGold
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(crescent, crescentPaint);
-
-    // Golden star near crescent moon
-    final Paint moonStarPaint = Paint()..color = moonGold.withValues(alpha: 0.95);
-    canvas.drawCircle(Offset(moonX - 15, moonY + 3), 2.0, moonStarPaint);
-
-    // 4. Mosque silhouette along bottom
+    // 2. Subtle Decorative Mosque Silhouette at bottom with soft opacity
     final Path mosquePath = Path();
     final double baseY = size.height;
-    final double roofY = size.height * 0.84;
+    final double roofY = size.height * 0.88;
 
     mosquePath.moveTo(0, baseY);
-    mosquePath.lineTo(0, roofY + 25);
+    mosquePath.lineTo(0, roofY + 20);
 
     // Left Minaret
-    mosquePath.lineTo(size.width * 0.07, roofY + 25);
-    mosquePath.lineTo(size.width * 0.07, roofY - 45);
-    mosquePath.lineTo(size.width * 0.09, roofY - 65);
-    mosquePath.lineTo(size.width * 0.11, roofY - 45);
-    mosquePath.lineTo(size.width * 0.11, roofY + 25);
+    mosquePath.lineTo(size.width * 0.08, roofY + 20);
+    mosquePath.lineTo(size.width * 0.08, roofY - 35);
+    mosquePath.lineTo(size.width * 0.10, roofY - 50);
+    mosquePath.lineTo(size.width * 0.12, roofY - 35);
+    mosquePath.lineTo(size.width * 0.12, roofY + 20);
 
     // Small Dome Left
-    mosquePath.lineTo(size.width * 0.20, roofY + 25);
-    mosquePath.quadraticBezierTo(size.width * 0.30, roofY - 15, size.width * 0.40, roofY + 25);
+    mosquePath.lineTo(size.width * 0.22, roofY + 20);
+    mosquePath.quadraticBezierTo(size.width * 0.32, roofY - 12, size.width * 0.42, roofY + 20);
 
-    // Grand Central Dome
-    mosquePath.lineTo(size.width * 0.43, roofY + 20);
-    mosquePath.quadraticBezierTo(size.width * 0.58, roofY - 40, size.width * 0.73, roofY + 20);
+    // Central Grand Dome
+    mosquePath.lineTo(size.width * 0.45, roofY + 15);
+    mosquePath.quadraticBezierTo(size.width * 0.60, roofY - 32, size.width * 0.75, roofY + 15);
 
     // Right Minaret
-    mosquePath.lineTo(size.width * 0.85, roofY + 25);
-    mosquePath.lineTo(size.width * 0.85, roofY - 55);
-    mosquePath.lineTo(size.width * 0.87, roofY - 75);
-    mosquePath.lineTo(size.width * 0.89, roofY - 55);
-    mosquePath.lineTo(size.width * 0.89, roofY + 25);
+    mosquePath.lineTo(size.width * 0.86, roofY + 20);
+    mosquePath.lineTo(size.width * 0.86, roofY - 45);
+    mosquePath.lineTo(size.width * 0.88, roofY - 60);
+    mosquePath.lineTo(size.width * 0.90, roofY - 45);
+    mosquePath.lineTo(size.width * 0.90, roofY + 20);
 
-    mosquePath.lineTo(size.width, roofY + 25);
+    mosquePath.lineTo(size.width, roofY + 20);
     mosquePath.lineTo(size.width, baseY);
     mosquePath.close();
 
     final Paint mosquePaint = Paint()
-      ..color = mosqueSilhouetteColor
+      ..color = accentGreen
       ..style = PaintingStyle.fill;
     canvas.drawPath(mosquePath, mosquePaint);
+
+    // 3. Subtle gold arch aura in upper right
+    final Paint auraPaint = Paint()
+      ..color = accentGold
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 28);
+    canvas.drawCircle(Offset(size.width * 0.85, 70), 55, auraPaint);
   }
 
   @override
