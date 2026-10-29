@@ -34,8 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.data.model.AppThemeMode
-import com.example.ui.theme.EmeraldNeonBg
-import com.example.ui.theme.EmeraldNeonPrimary
 import com.example.ui.theme.GlassBg
 import com.example.ui.theme.GlassPrimary
 import com.example.ui.theme.LocalIslamicColors
@@ -87,14 +85,15 @@ fun ThemeSelectorDialog(
                 items(AppThemeMode.values()) { mode ->
                     val isSelected = mode == currentTheme
 
-                    // Representative colors for the preview dot
-                    val (dotBg, dotAccent) = when (mode) {
-                        AppThemeMode.SACRED_LIGHT -> SacredLightBg to SacredLightPrimary
-                        AppThemeMode.MIDNIGHT_OTTOMAN -> OttomanBg to OttomanPrimary
-                        AppThemeMode.GLASSMORPHISM_3D -> GlassBg to GlassPrimary
-                        AppThemeMode.MASJID_ARCHITECTURE -> MasjidBg to MasjidPrimary
-                        AppThemeMode.DARK_EMERALD_NEON -> EmeraldNeonBg to EmeraldNeonPrimary
+                    val dotColors = when (mode) {
+                        AppThemeMode.SACRED_LIGHT -> Pair(SacredLightBg, SacredLightPrimary)
+                        AppThemeMode.DARK_EMERALD_NEON -> Pair(com.example.ui.theme.SacredNightBg, com.example.ui.theme.SacredNightPrimary)
+                        AppThemeMode.MIDNIGHT_OTTOMAN -> Pair(OttomanBg, OttomanPrimary)
+                        AppThemeMode.GLASSMORPHISM_3D -> Pair(GlassBg, GlassPrimary)
+                        AppThemeMode.MASJID_ARCHITECTURE -> Pair(MasjidBg, MasjidPrimary)
                     }
+                    val dotBg = dotColors.first
+                    val dotAccent = dotColors.second
 
                     Surface(
                         shape = RoundedCornerShape(14.dp),

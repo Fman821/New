@@ -2,47 +2,69 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// ================= 1. SACRED LIGHT (የቀን ብርሃን) ================= //
-val SacredLightBg = Color(0xFFF9F6F0)
-val SacredLightSurface = Color(0xFFFFFFFF)
-val SacredLightPrimary = Color(0xFF0E5A3E) // Dark green Arabic calligraphy
-val SacredLightSecondary = Color(0xFFC59B27) // Delicate gold
-val SacredLightBorder = Color(0xFFE8D399)
-val SacredLightText = Color(0xFF1E2823)
-val SacredLightSubtext = Color(0xFF5A6961)
+// =============================================================================
+// NUR ISLAMIC LIFESTYLE - PREMIUM COLOR SYSTEM
+// =============================================================================
 
-// ================= 2. MIDNIGHT OTTOMAN (የኦቶማን ሰማያዊ) ================= //
-val OttomanBg = Color(0xFF0A1128) // Deep midnight navy
+// Core Foundation Colors
+val DeepEmerald = Color(0xFF06251D)      // Dark background / luxury base
+val DarkForestGreen = Color(0xFF0B382B)  // Dark mode card surfaces
+val PrimaryGreen = Color(0xFF176B50)     // Active buttons, accents, branding
+val ChampagneGold = Color(0xFFD9B66F)    // Premium metallic gold accents
+val SoftGold = Color(0xFFF2D99A)         // Glowing secondary gold
+val WarmCream = Color(0xFFFAF7F0)        // Light mode serene background
+val PureWhite = Color(0xFFFFFFFF)        // Light mode card surface
+val PrimaryTextDark = Color(0xFF172B24)  // High-contrast primary text on light
+val SecondaryTextDark = Color(0xFF77847C)// Subtle subtitles on light
+val SubtleBorder = Color(0xFFE8E0D1)     // Elegant divider / card border
+
+// Additional Islamic Accent Hues
+val ArabicGold = Color(0xFFC59B27)
+val ArabicEmerald = Color(0xFF0E5A3E)
+val LightSurfaceVariant = Color(0xFFF2ECE1)
+val DarkSurfaceVariant = Color(0xFF114234)
+
+// ================= 1. SACRED LIGHT (Light Mode — Sacred Light) ================= //
+val SacredLightBg = WarmCream
+val SacredLightSurface = PureWhite
+val SacredLightPrimary = ArabicEmerald
+val SacredLightSecondary = ChampagneGold
+val SacredLightBorder = SubtleBorder
+val SacredLightText = PrimaryTextDark
+val SacredLightSubtext = SecondaryTextDark
+
+// ================= 2. SACRED NIGHT / DARK EMERALD (Dark Mode — Sacred Night) ================= //
+val SacredNightBg = DeepEmerald
+val SacredNightSurface = DarkForestGreen
+val SacredNightPrimary = SoftGold
+val SacredNightSecondary = PrimaryGreen
+val SacredNightBorder = Color(0x33F2D99A)
+val SacredNightText = Color(0xFFFAF7F0)
+val SacredNightSubtext = Color(0xFFA6BAAF)
+
+// ================= 3. MIDNIGHT OTTOMAN ================= //
+val OttomanBg = Color(0xFF0A1128)
 val OttomanSurface = Color(0xFF111D3D)
-val OttomanPrimary = Color(0xFFE0A98B) // Rose gold / Copper accent
-val OttomanSecondary = Color(0xFFF1D595) // Starry gold
-val OttomanBorder = Color(0xFF8B5A3E) // Copper border
+val OttomanPrimary = Color(0xFFE0A98B)
+val OttomanSecondary = Color(0xFFF1D595)
+val OttomanBorder = Color(0xFF8B5A3E)
 val OttomanText = Color(0xFFE9EEF7)
 val OttomanSubtext = Color(0xFF98A6C2)
 
-// ================= 3. GLASSMORPHISM & 3D (ዘመናዊ ግላስ) ================= //
-val GlassBg = Color(0xFF06231C)
-val GlassSurface = Color(0xCC133B31) // Translucent frosted card
-val GlassPrimary = Color(0xFFFFD700) // Radiant Gold
-val GlassSecondary = Color(0xFF38EF7D) // Neon emerald glow
-val GlassBorder = Color(0x66FFD700)
-val GlassText = Color(0xFFF3FFF9)
+// ================= 4. GLASSMORPHISM 3D ================= //
+val GlassBg = Color(0xFF051D16)
+val GlassSurface = Color(0xCC0D3328)
+val GlassPrimary = ChampagneGold
+val GlassSecondary = Color(0xFF26A669)
+val GlassBorder = Color(0x44D9B66F)
+val GlassText = Color(0xFFF7FDF9)
 val GlassSubtext = Color(0xFFA5CFC3)
 
-// ================= 4. MASJID ARCHITECTURE (የመስጊድ አርክቴክቸር) ================= //
-val MasjidBg = Color(0xFFF5F7F6) // Soft mosque white
-val MasjidSurface = Color(0xFFFFFFFF)
-val MasjidPrimary = Color(0xFF0E4F3B) // Traditional deep mosque green
-val MasjidSecondary = Color(0xFFC19E53) // Sand gold
-val MasjidBorder = Color(0xFFD4DDD8) // Silver/stone accent
-val MasjidText = Color(0xFF1B2B24)
-val MasjidSubtext = Color(0xFF566960)
-
-// ================= 5. DARK EMERALD & NEON (ኤመራልድ ኒዮን) ================= //
-val EmeraldNeonBg = Color(0xFF051B13) // Rich emerald dark
-val EmeraldNeonSurface = Color(0xFF0A2B20)
-val EmeraldNeonPrimary = Color(0xFFFFDE59) // Glowing neon gold
-val EmeraldNeonSecondary = Color(0xFF00E676) // Vivid neon emerald
-val EmeraldNeonBorder = Color(0x6600E676)
-val EmeraldNeonText = Color(0xFFEBFFF6)
-val EmeraldNeonSubtext = Color(0xFF8FD8B8)
+// ================= 5. MASJID ARCHITECTURE ================= //
+val MasjidBg = Color(0xFFF5F8F6)
+val MasjidSurface = PureWhite
+val MasjidPrimary = PrimaryGreen
+val MasjidSecondary = ArabicGold
+val MasjidBorder = Color(0xFFD3DDD8)
+val MasjidText = Color(0xFF132920)
+val MasjidSubtext = Color(0xFF5B6E66)

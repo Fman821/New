@@ -2,29 +2,28 @@ package com.example
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,31 +33,33 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.FontSizeDialog
 import com.example.ui.components.ModernTasbihView
 import com.example.ui.components.ThemeSelectorDialog
+import com.example.ui.screens.AzkarCategoriesScreen
 import com.example.ui.screens.AzkarListScreen
-import com.example.ui.screens.DuasScreen
 import com.example.ui.screens.FavoritesScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.NamesOfAllahScreen
+import com.example.ui.screens.PrayerQiblaScreen
+import com.example.ui.screens.QuranAndDuaScreen
 import com.example.ui.theme.AzkarAppTheme
 import com.example.ui.theme.LocalIslamicColors
 import com.example.ui.viewmodel.AppTab
@@ -89,6 +90,14 @@ fun MainAppScreen(viewModel: MainViewModel) {
 
     var showThemeDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
+    var quranInitialTab by remember { mutableIntStateOf(0) }
+
+    // Intercept back button when inside category or secondary screen
+    if (uiState.selectedCategory != null) {
+        BackHandler { viewModel.closeCategory() }
+    } else if (uiState.currentTab != AppTab.HOME) {
+        BackHandler { viewModel.setTab(AppTab.HOME) }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -98,19 +107,55 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     title = {
                         Column {
                             Text(
-                                text = "Azkar & Dua • ኑሩል አዝካር",
+                                text = "Nur Islamic Lifestyle",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = uiState.currentTheme.titleAm,
+                                text = "ኑሩል እስላም • ${uiState.currentTheme.titleAm}",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = islamicColors.goldAccent
+                                color = islamicColors.goldAccent,
+                                fontSize = 11.sp
                             )
                         }
                     },
+                    navigationIcon = {
+                        if (uiState.currentTab == AppTab.NAMES || uiState.currentTab == AppTab.FAVORITES) {
+                            IconButton(onClick = { viewModel.setTab(AppTab.HOME) }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    },
                     actions = {
+                        // 99 Names shortcut
+                        IconButton(
+                            onClick = { viewModel.setTab(AppTab.NAMES) },
+                            modifier = Modifier.testTag("names_shortcut_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = "99 Names of Allah",
+                                tint = if (uiState.currentTab == AppTab.NAMES) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        // Favorites shortcut
+                        IconButton(
+                            onClick = { viewModel.setTab(AppTab.FAVORITES) },
+                            modifier = Modifier.testTag("favorites_shortcut_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Favorites",
+                                tint = if (uiState.currentTab == AppTab.FAVORITES) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
                         // Font size dialog button
                         IconButton(
                             onClick = { showFontDialog = true },
@@ -151,17 +196,22 @@ fun MainAppScreen(viewModel: MainViewModel) {
                 ) {
                     val tabs = listOf(
                         AppTab.HOME to Icons.Default.Home,
-                        AppTab.DUAS to Icons.Default.MenuBook,
-                        AppTab.TASBIH to Icons.Default.TouchApp,
-                        AppTab.NAMES to Icons.Default.AutoAwesome,
-                        AppTab.FAVORITES to Icons.Default.Star
+                        AppTab.AZKAR to Icons.Default.WbSunny,
+                        AppTab.QURAN_DUA to Icons.Default.MenuBook,
+                        AppTab.PRAYER_QIBLA to Icons.Default.Mosque,
+                        AppTab.TASBIH to Icons.Default.TouchApp
                     )
 
                     tabs.forEach { (tab, icon) ->
                         val isSelected = uiState.currentTab == tab
                         NavigationBarItem(
                             selected = isSelected,
-                            onClick = { viewModel.setTab(tab) },
+                            onClick = {
+                                if (tab == AppTab.QURAN_DUA) {
+                                    quranInitialTab = 0
+                                }
+                                viewModel.setTab(tab)
+                            },
                             icon = {
                                 Icon(
                                     imageVector = icon,
@@ -172,7 +222,8 @@ fun MainAppScreen(viewModel: MainViewModel) {
                                 Text(
                                     text = tab.titleAm,
                                     style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    fontSize = 11.sp
                                 )
                             },
                             colors = NavigationBarItemDefaults.colors(
@@ -215,21 +266,53 @@ fun MainAppScreen(viewModel: MainViewModel) {
                 Crossfade(targetState = uiState.currentTab, label = "tabCrossfade") { tab ->
                     when (tab) {
                         AppTab.HOME -> {
+                            val isVerseBookmarked = uiState.favorites.contains("daily_verse_albaqarah_152")
                             HomeScreen(
                                 categories = uiState.categories,
                                 tasbihCount = uiState.tasbihCount,
                                 tasbihTarget = uiState.tasbihTarget,
+                                isVerseBookmarked = isVerseBookmarked,
+                                onToggleBookmarkVerse = { viewModel.toggleBookmarkDailyVerse() },
                                 onCategoryClick = { viewModel.openCategory(it) },
+                                onNavigateTab = { targetTab ->
+                                    if (targetTab == AppTab.DUAS) {
+                                        quranInitialTab = 1
+                                        viewModel.setTab(AppTab.QURAN_DUA)
+                                    } else {
+                                        viewModel.setTab(targetTab)
+                                    }
+                                },
+                                onOpenPrayerTab = {
+                                    viewModel.setTab(AppTab.PRAYER_QIBLA)
+                                },
+                                onOpenQiblaTab = {
+                                    viewModel.setTab(AppTab.PRAYER_QIBLA)
+                                },
+                                onOpenThemeDialog = { showThemeDialog = true },
                                 onTasbihQuickTap = { viewModel.incrementTasbih() },
                                 onNavigateTasbihTab = { viewModel.setTab(AppTab.TASBIH) }
                             )
                         }
-                        AppTab.DUAS -> {
-                            DuasScreen(
+                        AppTab.AZKAR -> {
+                            AzkarCategoriesScreen(
+                                categories = uiState.categories,
+                                onCategoryClick = { viewModel.openCategory(it) }
+                            )
+                        }
+                        AppTab.QURAN_DUA, AppTab.DUAS -> {
+                            QuranAndDuaScreen(
                                 duas = uiState.duas,
                                 favorites = uiState.favorites,
                                 arabicFontScale = uiState.arabicFontScale,
-                                onToggleFavorite = { id -> viewModel.toggleFavorite(id) }
+                                onToggleFavorite = { id -> viewModel.toggleFavorite(id) },
+                                initialTab = quranInitialTab
+                            )
+                        }
+                        AppTab.PRAYER_QIBLA -> {
+                            PrayerQiblaScreen(
+                                currentCity = uiState.currentCity,
+                                prayerSchedule = uiState.prayerSchedule,
+                                onSelectCity = { viewModel.selectCity(it) }
                             )
                         }
                         AppTab.TASBIH -> {

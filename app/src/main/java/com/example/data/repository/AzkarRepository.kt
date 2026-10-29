@@ -219,4 +219,14 @@ class AzkarRepository(private val context: Context) {
     fun resetItemCount(uniqueKey: String) {
         prefs.edit().putInt(KEY_COMPLETED_AZKAR_PREFIX + uniqueKey, 0).apply()
     }
+
+    // ================= City Selection ================= //
+
+    fun getSavedCityId(): String {
+        return prefs.getString("pref_selected_city_id", "addis_ababa") ?: "addis_ababa"
+    }
+
+    fun saveCityId(cityId: String) {
+        prefs.edit().putString("pref_selected_city_id", cityId).apply()
+    }
 }

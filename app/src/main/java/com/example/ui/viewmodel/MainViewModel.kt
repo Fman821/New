@@ -8,6 +8,9 @@ import com.example.data.model.AppThemeMode
 import com.example.data.model.AzkarCategory
 import com.example.data.model.AzkarItem
 import com.example.data.model.DuaItem
+import com.example.data.model.IslamicCity
+import com.example.data.model.PrayerSchedule
+import com.example.data.prayer.PrayerTimesCalculator
 import com.example.data.repository.AudioPlaybackState
 import com.example.data.repository.AudioPlayerManager
 import com.example.data.repository.AzkarRepository
@@ -18,18 +21,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * Main navigation tabs in the application.
+ * Main navigation destinations in the application.
  */
 enum class AppTab(val titleAm: String) {
     HOME("ዋና ገጽ"),
+    AZKAR("አዝካር"),
+    QURAN_DUA("ቁርኣንና ዱዓ"),
     DUAS("ዱዓዎች"),
+    PRAYER_QIBLA("ሰላትና ቂብላ"),
     TASBIH("ተስቢሕ"),
     NAMES("99 ስሞች"),
     FAVORITES("ተወዳጆች")
 }
 
 /**
- * UI State holding application state for Azkar, Duas, Names of Allah, and Tasbih.
+ * UI State holding comprehensive application state.
  */
 data class MainUiState(
     val currentTab: AppTab = AppTab.HOME,
@@ -41,6 +47,9 @@ data class MainUiState(
     val currentTheme: AppThemeMode = AppThemeMode.SACRED_LIGHT,
     val arabicFontScale: Float = 1.0f,
     val searchQuery: String = "",
+    // Prayer & Qibla state
+    val currentCity: IslamicCity = PrayerTimesCalculator.DEFAULT_CITIES.first(),
+    val prayerSchedule: PrayerSchedule = PrayerTimesCalculator.calculatePrayerTimes(PrayerTimesCalculator.DEFAULT_CITIES.first()),
     // Tasbih state
     val tasbihCount: Int = 0,
     val tasbihTarget: Int = 33,
@@ -78,6 +87,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val tasbihCount = repository.getTasbihCount()
             val tasbihTarget = repository.getTasbihTarget()
             val tasbihTotal = repository.getTasbihTotal()
+            val savedCityId = repository.getSavedCityId()
+
+            val city = PrayerTimesCalculator.DEFAULT_CITIES.firstOrNull { it.id == savedCityId }
+                ?: PrayerTimesCalculator.DEFAULT_CITIES.first()
+            val schedule = PrayerTimesCalculator.calculatePrayerTimes(city)
 
             val categories = repository.loadAzkarCategories()
             val duas = repository.loadDuas()
@@ -91,6 +105,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     tasbihCount = tasbihCount,
                     tasbihTarget = tasbihTarget,
                     tasbihTotal = tasbihTotal,
+                    currentCity = city,
+                    prayerSchedule = schedule,
                     categories = categories,
                     duas = duas,
                     namesOfAllah = names,
@@ -118,12 +134,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update { it.copy(selectedCategory = category, searchQuery = "") }
     }
 
+    fun openCategoryById(categoryId: String) {
+        val cat = _uiState.value.categories.firstOrNull { it.id == categoryId }
+        if (cat != null) {
+            openCategory(cat)
+        }
+    }
+
     fun closeCategory() {
         _uiState.update { it.copy(selectedCategory = null, searchQuery = "") }
     }
 
     fun setSearchQuery(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
+    }
+
+    // ================= Prayer & Qibla ================= //
+
+    fun selectCity(city: IslamicCity) {
+        repository.saveCityId(city.id)
+        val schedule = PrayerTimesCalculator.calculatePrayerTimes(city)
+        _uiState.update {
+            it.copy(
+                currentCity = city,
+                prayerSchedule = schedule
+            )
+        }
     }
 
     // ================= Theme & Settings ================= //
@@ -144,6 +180,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.toggleFavorite(itemId)
         val updatedFavs = repository.getFavorites()
         _uiState.update { it.copy(favorites = updatedFavs) }
+    }
+
+    fun toggleBookmarkDailyVerse() {
+        toggleFavorite("daily_verse_albaqarah_152")
     }
 
     // ================= Per-Azkar item count tracking ================= //

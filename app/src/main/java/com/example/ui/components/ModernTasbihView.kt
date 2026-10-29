@@ -35,7 +35,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -180,6 +182,8 @@ fun ModernTasbihView(
             }
 
             Row {
+                var showResetDialog by remember { mutableStateOf(false) }
+
                 IconButton(onClick = onToggleVibration) {
                     Icon(
                         imageVector = Icons.Default.Vibration,
@@ -187,11 +191,47 @@ fun ModernTasbihView(
                         tint = if (vibrationEnabled) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 }
-                IconButton(onClick = onReset) {
+                IconButton(onClick = { showResetDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Reset Counter",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (showResetDialog) {
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { showResetDialog = false },
+                        title = {
+                            Text(
+                                text = "ተስቢሕ ቆጣሪውን ማጽዳት ይፈልጋሉ?",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = "የአሁኑ የቆጣሪ ቁጥር ($count) ወደ ዜሮ ይመለሳል።",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        confirmButton = {
+                            androidx.compose.material3.TextButton(
+                                onClick = {
+                                    onReset()
+                                    showResetDialog = false
+                                }
+                            ) {
+                                Text("አጽዳ (Reset)", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+                            }
+                        },
+                        dismissButton = {
+                            androidx.compose.material3.TextButton(
+                                onClick = { showResetDialog = false }
+                            ) {
+                                Text("ተመለስ (Cancel)")
+                            }
+                        }
                     )
                 }
             }

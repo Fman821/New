@@ -34,6 +34,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -281,18 +284,56 @@ fun AzkarCard(
 
                 // Interactive Repeat Counter Pill
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    var showResetConfirm by remember { mutableStateOf(false) }
+
                     if (completedCount > 0) {
                         IconButton(
-                            onClick = onResetCount,
+                            onClick = { showResetConfirm = true },
                             modifier = Modifier.size(32.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "Reset",
+                                contentDescription = "Reset Count",
                                 modifier = Modifier.size(16.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                    }
+
+                    if (showResetConfirm) {
+                        androidx.compose.material3.AlertDialog(
+                            onDismissRequest = { showResetConfirm = false },
+                            title = {
+                                Text(
+                                    text = "ቆጣሪውን ማጽዳት ይፈልጋሉ?",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            },
+                            text = {
+                                Text(
+                                    text = "የዚህ አዝካር የተከናወነ ድግግሞሽ ቆጣሪ ወደ 0 ይመለሳል።",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            confirmButton = {
+                                androidx.compose.material3.TextButton(
+                                    onClick = {
+                                        onResetCount()
+                                        showResetConfirm = false
+                                    }
+                                ) {
+                                    Text("አጽዳ (Reset)", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+                                }
+                            },
+                            dismissButton = {
+                                androidx.compose.material3.TextButton(
+                                    onClick = { showResetConfirm = false }
+                                ) {
+                                    Text("ተመለስ (Cancel)")
+                                }
+                            }
+                        )
                     }
 
                     val buttonBg by animateColorAsState(

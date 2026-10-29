@@ -15,40 +15,65 @@ data class ExtendedIslamicColors(
     val themeMode: AppThemeMode,
     val cardBorder: Color,
     val goldAccent: Color,
+    val secondaryGold: Color,
     val arabicCalligraphyColor: Color,
+    val primaryText: Color,
     val subtextColor: Color,
     val cardBg: Color,
+    val surfaceHighlight: Color,
     val isGlassmorphism: Boolean = false,
-    val isMasjidArch: Boolean = false
+    val isMasjidArch: Boolean = false,
+    val isDark: Boolean = false
 )
 
 val LocalIslamicColors = staticCompositionLocalOf {
     ExtendedIslamicColors(
         themeMode = AppThemeMode.SACRED_LIGHT,
         cardBorder = SacredLightBorder,
-        goldAccent = SacredLightSecondary,
-        arabicCalligraphyColor = SacredLightPrimary,
-        subtextColor = SacredLightSubtext,
-        cardBg = SacredLightSurface
+        goldAccent = ChampagneGold,
+        secondaryGold = SoftGold,
+        arabicCalligraphyColor = ArabicEmerald,
+        primaryText = PrimaryTextDark,
+        subtextColor = SecondaryTextDark,
+        cardBg = SacredLightSurface,
+        surfaceHighlight = LightSurfaceVariant,
+        isDark = false
     )
 }
 
-// 1. Sacred Light M3 Scheme
+// 1. Sacred Light M3 Scheme (Warm Cream & White)
 private val SacredLightColorScheme = lightColorScheme(
-    primary = SacredLightPrimary,
+    primary = PrimaryGreen,
     onPrimary = Color.White,
-    secondary = SacredLightSecondary,
-    onSecondary = Color.White,
-    background = SacredLightBg,
-    onBackground = SacredLightText,
-    surface = SacredLightSurface,
-    onSurface = SacredLightText,
-    surfaceVariant = Color(0xFFF3ECE0),
-    onSurfaceVariant = SacredLightSubtext,
-    outline = SacredLightBorder
+    secondary = ChampagneGold,
+    onSecondary = PrimaryTextDark,
+    background = WarmCream,
+    onBackground = PrimaryTextDark,
+    surface = PureWhite,
+    onSurface = PrimaryTextDark,
+    surfaceVariant = LightSurfaceVariant,
+    onSurfaceVariant = SecondaryTextDark,
+    outline = SubtleBorder,
+    outlineVariant = Color(0xFFF0EBE1)
 )
 
-// 2. Midnight Ottoman M3 Scheme
+// 2. Sacred Night M3 Scheme (Deep Emerald & Forest Green)
+private val SacredNightColorScheme = darkColorScheme(
+    primary = ChampagneGold,
+    onPrimary = DeepEmerald,
+    secondary = SoftGold,
+    onSecondary = DeepEmerald,
+    background = DeepEmerald,
+    onBackground = Color(0xFFFAF7F0),
+    surface = DarkForestGreen,
+    onSurface = Color(0xFFFAF7F0),
+    surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = Color(0xFFA6BAAF),
+    outline = Color(0x33F2D99A),
+    outlineVariant = Color(0x22FFFFFF)
+)
+
+// 3. Midnight Ottoman M3 Scheme
 private val OttomanColorScheme = darkColorScheme(
     primary = OttomanPrimary,
     onPrimary = OttomanBg,
@@ -63,9 +88,9 @@ private val OttomanColorScheme = darkColorScheme(
     outline = OttomanBorder
 )
 
-// 3. Glassmorphism & 3D M3 Scheme
+// 4. Glassmorphism M3 Scheme
 private val GlassColorScheme = darkColorScheme(
-    primary = GlassPrimary,
+    primary = ChampagneGold,
     onPrimary = GlassBg,
     secondary = GlassSecondary,
     onSecondary = GlassBg,
@@ -73,12 +98,12 @@ private val GlassColorScheme = darkColorScheme(
     onBackground = GlassText,
     surface = GlassSurface,
     onSurface = GlassText,
-    surfaceVariant = Color(0xFF1A463B),
+    surfaceVariant = Color(0xFF133B31),
     onSurfaceVariant = GlassSubtext,
     outline = GlassBorder
 )
 
-// 4. Masjid Architecture M3 Scheme
+// 5. Masjid Architecture M3 Scheme
 private val MasjidColorScheme = lightColorScheme(
     primary = MasjidPrimary,
     onPrimary = Color.White,
@@ -93,21 +118,6 @@ private val MasjidColorScheme = lightColorScheme(
     outline = MasjidBorder
 )
 
-// 5. Dark Emerald & Neon M3 Scheme
-private val EmeraldNeonColorScheme = darkColorScheme(
-    primary = EmeraldNeonPrimary,
-    onPrimary = EmeraldNeonBg,
-    secondary = EmeraldNeonSecondary,
-    onSecondary = EmeraldNeonBg,
-    background = EmeraldNeonBg,
-    onBackground = EmeraldNeonText,
-    surface = EmeraldNeonSurface,
-    onSurface = EmeraldNeonText,
-    surfaceVariant = Color(0xFF12372A),
-    onSurfaceVariant = EmeraldNeonSubtext,
-    outline = EmeraldNeonBorder
-)
-
 @Composable
 fun AzkarAppTheme(
     themeMode: AppThemeMode = AppThemeMode.SACRED_LIGHT,
@@ -115,54 +125,79 @@ fun AzkarAppTheme(
 ) {
     val colorScheme = when (themeMode) {
         AppThemeMode.SACRED_LIGHT -> SacredLightColorScheme
+        AppThemeMode.DARK_EMERALD_NEON -> SacredNightColorScheme
         AppThemeMode.MIDNIGHT_OTTOMAN -> OttomanColorScheme
         AppThemeMode.GLASSMORPHISM_3D -> GlassColorScheme
         AppThemeMode.MASJID_ARCHITECTURE -> MasjidColorScheme
-        AppThemeMode.DARK_EMERALD_NEON -> EmeraldNeonColorScheme
+    }
+
+    val isDark = when (themeMode) {
+        AppThemeMode.SACRED_LIGHT, AppThemeMode.MASJID_ARCHITECTURE -> false
+        else -> true
     }
 
     val islamicColors = when (themeMode) {
         AppThemeMode.SACRED_LIGHT -> ExtendedIslamicColors(
             themeMode = themeMode,
-            cardBorder = SacredLightBorder,
-            goldAccent = SacredLightSecondary,
-            arabicCalligraphyColor = SacredLightPrimary,
-            subtextColor = SacredLightSubtext,
-            cardBg = SacredLightSurface
+            cardBorder = SubtleBorder,
+            goldAccent = ChampagneGold,
+            secondaryGold = SoftGold,
+            arabicCalligraphyColor = ArabicEmerald,
+            primaryText = PrimaryTextDark,
+            subtextColor = SecondaryTextDark,
+            cardBg = PureWhite,
+            surfaceHighlight = LightSurfaceVariant,
+            isDark = false
+        )
+        AppThemeMode.DARK_EMERALD_NEON -> ExtendedIslamicColors(
+            themeMode = themeMode,
+            cardBorder = Color(0x33F2D99A),
+            goldAccent = SoftGold,
+            secondaryGold = ChampagneGold,
+            arabicCalligraphyColor = SoftGold,
+            primaryText = Color(0xFFFAF7F0),
+            subtextColor = Color(0xFFA6BAAF),
+            cardBg = DarkForestGreen,
+            surfaceHighlight = DarkSurfaceVariant,
+            isDark = true
         )
         AppThemeMode.MIDNIGHT_OTTOMAN -> ExtendedIslamicColors(
             themeMode = themeMode,
             cardBorder = OttomanBorder,
             goldAccent = OttomanSecondary,
+            secondaryGold = OttomanPrimary,
             arabicCalligraphyColor = OttomanSecondary,
+            primaryText = OttomanText,
             subtextColor = OttomanSubtext,
-            cardBg = OttomanSurface
+            cardBg = OttomanSurface,
+            surfaceHighlight = Color(0xFF16254F),
+            isDark = true
         )
         AppThemeMode.GLASSMORPHISM_3D -> ExtendedIslamicColors(
             themeMode = themeMode,
             cardBorder = GlassBorder,
-            goldAccent = GlassPrimary,
-            arabicCalligraphyColor = GlassPrimary,
+            goldAccent = ChampagneGold,
+            secondaryGold = GlassSecondary,
+            arabicCalligraphyColor = ChampagneGold,
+            primaryText = GlassText,
             subtextColor = GlassSubtext,
             cardBg = GlassSurface,
-            isGlassmorphism = true
+            surfaceHighlight = Color(0xFF133B31),
+            isGlassmorphism = true,
+            isDark = true
         )
         AppThemeMode.MASJID_ARCHITECTURE -> ExtendedIslamicColors(
             themeMode = themeMode,
             cardBorder = MasjidBorder,
-            goldAccent = MasjidSecondary,
-            arabicCalligraphyColor = MasjidPrimary,
+            goldAccent = ArabicGold,
+            secondaryGold = ChampagneGold,
+            arabicCalligraphyColor = PrimaryGreen,
+            primaryText = MasjidText,
             subtextColor = MasjidSubtext,
             cardBg = MasjidSurface,
-            isMasjidArch = true
-        )
-        AppThemeMode.DARK_EMERALD_NEON -> ExtendedIslamicColors(
-            themeMode = themeMode,
-            cardBorder = EmeraldNeonBorder,
-            goldAccent = EmeraldNeonPrimary,
-            arabicCalligraphyColor = EmeraldNeonPrimary,
-            subtextColor = EmeraldNeonSubtext,
-            cardBg = EmeraldNeonSurface
+            surfaceHighlight = Color(0xFFE9EFEB),
+            isMasjidArch = true,
+            isDark = false
         )
     }
 
