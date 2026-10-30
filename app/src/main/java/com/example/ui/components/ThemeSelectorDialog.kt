@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.data.model.AppThemeMode
 import com.example.ui.theme.GlassBg
 import com.example.ui.theme.GlassPrimary
@@ -171,10 +172,10 @@ fun FontSizeDialog(
 ) {
     val islamicColors = LocalIslamicColors.current
     val fontOptions = listOf(
-        0.85f to "መደበኛ (Small)",
-        1.0f to "መካከለኛ (Medium)",
-        1.2f to "ትልቅ (Large)",
-        1.4f to "በጣም ትልቅ (Extra Large)"
+        0.85f to "ትንሽ",
+        1.0f to "መደበኛ",
+        1.2f to "ትልቅ",
+        1.4f to "በጣም ትልቅ"
     )
 
     AlertDialog(
@@ -186,7 +187,7 @@ fun FontSizeDialog(
         },
         title = {
             Text(
-                text = "የአረብኛ ጽሑፍ መጠን",
+                text = "የንባብ ፊደል መጠን",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -194,10 +195,38 @@ fun FontSizeDialog(
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "ለማንበብ የሚያመችዎትን የፊደል መጠን ይምረጡ:",
+                    text = "ለዓይንዎ የሚመችዎትን መጠን ይምረጡ። ለውጡ በአዝካር ንባብ ላይ ይታያል።",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    color = islamicColors.surfaceHighlight,
+                    border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.6f))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "ቅድመ እይታ",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+                            fontSize = (24 * currentScale).sp,
+                            lineHeight = (40 * currentScale).sp,
+                            fontWeight = FontWeight.Medium,
+                            color = islamicColors.arabicCalligraphyColor
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(14.dp))
 
