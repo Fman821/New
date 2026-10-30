@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ sealed class AudioPlaybackState {
  * All player callbacks verify that they still belong to the active player,
  * preventing an old stream from changing the state of a newer stream.
  */
-class AudioPlayerManager {
+class AudioPlayerManager(@Suppress("unused") context: Context) {
 
     private var mediaPlayer: MediaPlayer? = null
     private var currentUrl: String? = null
