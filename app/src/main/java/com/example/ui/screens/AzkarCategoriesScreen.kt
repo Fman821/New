@@ -432,7 +432,7 @@ fun AzkarCategoriesScreen(
 
                         Icon(
                             imageVector = Icons.Default.ChevronRight,
-                            contentDescription = "Open",
+                            contentDescription = "ክፈት",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp)
                         )
