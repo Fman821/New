@@ -1,11 +1,18 @@
 package com.example
 
 import android.os.Bundle
+import android.app.TimePickerDialog
+import android.os.Build
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -25,6 +33,9 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Switch
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,6 +49,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -92,6 +106,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
     val islamicColors = LocalIslamicColors.current
 
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showReminderDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
     var quranInitialTab by remember { mutableIntStateOf(0) }
     // Intercept back button when inside category or secondary screen
@@ -134,6 +149,10 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         }
                     },
                     actions = {
+                        IconButton(onClick = { showReminderDialog = true }, modifier = Modifier.testTag("reminder_settings_button")) {
+                            Icon(Icons.Default.Alarm, contentDescription = "የአዝካር ማስታወሻ", tint = islamicColors.goldAccent)
+                        }
+
                         // 99 Names shortcut
                         IconButton(
                             onClick = { viewModel.setTab(AppTab.NAMES) },
@@ -387,6 +406,8 @@ fun MainAppScreen(viewModel: MainViewModel) {
         }
     }
 
+    if (showReminderDialog) { ReminderSettingsDialog(onDismiss = { showReminderDialog = false }) }
+
     // Theme Selector Dialog
     if (showThemeDialog) {
         ThemeSelectorDialog(
@@ -410,4 +431,67 @@ fun MainAppScreen(viewModel: MainViewModel) {
             onDismiss = { showFontDialog = false }
         )
     }
+}
+
+
+@Composable
+private fun ReminderSettingsDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("nurul_azkar_prefs", android.content.Context.MODE_PRIVATE) }
+    var morningEnabled by remember { mutableStateOf(prefs.getBoolean("reminder_morning_enabled", false)) }
+    var eveningEnabled by remember { mutableStateOf(prefs.getBoolean("reminder_evening_enabled", false)) }
+    var morningHour by remember { mutableIntStateOf(prefs.getInt("reminder_morning_hour", 7)) }
+    var morningMinute by remember { mutableIntStateOf(prefs.getInt("reminder_morning_minute", 0)) }
+    var eveningHour by remember { mutableIntStateOf(prefs.getInt("reminder_evening_hour", 18)) }
+    var eveningMinute by remember { mutableIntStateOf(prefs.getInt("reminder_evening_minute", 0)) }
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
+    fun save(kind: String, enabled: Boolean, hour: Int, minute: Int) {
+        prefs.edit().putBoolean("reminder_" + kind + "_enabled", enabled)
+            .putInt("reminder_" + kind + "_hour", hour)
+            .putInt("reminder_" + kind + "_minute", minute).apply()
+        if (enabled) {
+            com.example.reminder.AzkarReminderScheduler.schedule(context, kind, hour, minute)
+            if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            com.example.reminder.AzkarReminderScheduler.cancel(context, kind)
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("የአዝካር ማስታወሻ") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("የጠዋት አዝካር", fontWeight = FontWeight.Bold)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    Button(onClick = {
+                        TimePickerDialog(context, { _, h, m ->
+                            morningHour = h; morningMinute = m
+                            save("morning", morningEnabled, h, m)
+                        }, morningHour, morningMinute, false).show()
+                    }) { Text(String.format("%02d:%02d", morningHour, morningMinute)) }
+                    Switch(checked = morningEnabled, onCheckedChange = {
+                        morningEnabled = it; save("morning", it, morningHour, morningMinute)
+                    })
+                }
+                Text("የማታ አዝካር", fontWeight = FontWeight.Bold)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    Button(onClick = {
+                        TimePickerDialog(context, { _, h, m ->
+                            eveningHour = h; eveningMinute = m
+                            save("evening", eveningEnabled, h, m)
+                        }, eveningHour, eveningMinute, false).show()
+                    }) { Text(String.format("%02d:%02d", eveningHour, eveningMinute)) }
+                    Switch(checked = eveningEnabled, onCheckedChange = {
+                        eveningEnabled = it; save("evening", it, eveningHour, eveningMinute)
+                    })
+                }
+                Text("የNotification ፈቃድ መኖሩን አረጋግጥ። የባትሪ ቁጠባ ሁኔታ ማስታወሻውን ሊያዘገይ ይችላል።", style = MaterialTheme.typography.bodySmall)
+            }
+        },
+        confirmButton = { Button(onClick = onDismiss) { Text("ጨርስ") } }
+    )
 }
