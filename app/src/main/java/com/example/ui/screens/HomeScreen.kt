@@ -158,7 +158,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Amharic Azkar",
+                                text = "አማርኛ አዝካር",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.onSurface,
@@ -187,7 +187,7 @@ fun HomeScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Palette,
-                            contentDescription = "Theme",
+                            contentDescription = "የገጽታ ምርጫ",
                             tint = islamicColors.goldAccent
                         )
                     }
