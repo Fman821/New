@@ -165,7 +165,7 @@ fun HomeScreen(
                                 letterSpacing = 0.3.sp
                             )
                             Text(
-                                text = "አማርኛ አዝካር • ዕለታዊ ዝክር፣ ሰላማዊ ሕይወት",
+                                text = "ዕለታዊ ዝክር • ሰላማዊ ሕይወት",
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = islamicColors.arabicCalligraphyColor
@@ -436,7 +436,7 @@ fun HomeScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "ፈጣን ተስቢሕ (Quick Tasbih)",
+                            text = "ፈጣን ተስቢሕ",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -459,7 +459,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.TouchApp,
-                                contentDescription = "Count Tasbih",
+                                contentDescription = "ተስቢሕ ቁጥር ጨምር",
                                 tint = Color.Black
                             )
                         }
@@ -469,7 +469,7 @@ fun HomeScreen(
                         IconButton(onClick = onNavigateTasbihTab) {
                             Icon(
                                 imageVector = Icons.Default.ChevronRight,
-                                contentDescription = "Open Tasbih Tab",
+                                contentDescription = "የተስቢሕ ገጽ ክፈት",
                                 tint = islamicColors.goldAccent
                             )
                         }
@@ -519,7 +519,7 @@ private fun HijriDateCard() {
         ) {
             Column {
                 Text(
-                    text = "የሂጅራ ቀን (Hijri Date)",
+                    text = "የሂጅራ ቀን",
                     style = MaterialTheme.typography.labelMedium,
                     color = islamicColors.goldAccent,
                     fontWeight = FontWeight.Bold
@@ -644,7 +644,7 @@ private fun MorningAzkarHeroCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.WbSunny,
-                                contentDescription = "Sunrise",
+                                contentDescription = "የጥዋት ፀሐይ",
                                 tint = islamicColors.goldAccent,
                                 modifier = Modifier.size(22.dp)
                             )
@@ -711,7 +711,7 @@ private fun MorningAzkarHeroCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Morning Azkar",
+                        text = "የጥዋት ዝክር",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFFC5BAA5)
@@ -791,9 +791,9 @@ private fun MorningAzkarHeroCard(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (isComplete) "አዝካሩን ከልስ (Review Azkar)"
-                            else if (isStarted) "ክፍለ-ጊዜውን ቀጥል (Resume Session)"
-                            else "የጥዋት አዝካር ጀምር (Start Morning Azkar)",
+                            text = if (isComplete) "አዝካሩን እንደገና አንብብ"
+                            else if (isStarted) "ከቆምክበት ቀጥል"
+                            else "የጥዋት አዝካር ጀምር",
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -906,7 +906,7 @@ private fun EveningAzkarHeroCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.NightsStay,
-                                contentDescription = "Sunset & Evening",
+                                contentDescription = "የማታ ጨረቃ",
                                 tint = islamicColors.goldAccent,
                                 modifier = Modifier.size(22.dp)
                             )
@@ -972,7 +972,7 @@ private fun EveningAzkarHeroCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Evening Azkar",
+                        text = "የማታ ዝክር",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFFC5BAA5)
@@ -1054,7 +1054,7 @@ private fun EveningAzkarHeroCard(
                         Text(
                             text = if (isComplete) "አዝካሩን ከልስ (Review Azkar)"
                             else if (isStarted) "ክፍለ-ጊዜውን ቀጥል (Resume Session)"
-                            else "የማታ አዝካር ጀምር (Start Evening Azkar)",
+                            else "የማታ አዝካር ጀምር",
                             fontWeight = FontWeight.Bold
                         )
                     }
