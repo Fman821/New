@@ -30,6 +30,9 @@ class AzkarRepository(private val context: Context) {
         private const val KEY_TASBIH_COUNT = "pref_tasbih_count"
         private const val KEY_TASBIH_TARGET = "pref_tasbih_target"
         private const val KEY_TASBIH_TOTAL = "pref_tasbih_total"
+        private const val KEY_TASBIH_LAPS = "pref_tasbih_laps"
+        private const val KEY_TASBIH_PRESET = "pref_tasbih_preset"
+        private const val KEY_TASBIH_VIBRATION = "pref_tasbih_vibration"
         private const val KEY_COMPLETED_AZKAR_PREFIX = "pref_done_azkar_"
         private const val KEY_DAILY_DATE = "pref_daily_date"
         private const val KEY_RESUME_INDEX_PREFIX = "pref_resume_idx_"
@@ -204,6 +207,15 @@ class AzkarRepository(private val context: Context) {
         val current = getTasbihTotal()
         prefs.edit().putInt(KEY_TASBIH_TOTAL, current + 1).apply()
     }
+
+    fun getTasbihLaps(): Int = prefs.getInt(KEY_TASBIH_LAPS, 0)
+    fun saveTasbihLaps(laps: Int) = prefs.edit().putInt(KEY_TASBIH_LAPS, laps).apply()
+
+    fun getTasbihPreset(): String = prefs.getString(KEY_TASBIH_PRESET, "ሱብሓነላህ") ?: "ሱብሓነላህ"
+    fun saveTasbihPreset(text: String) = prefs.edit().putString(KEY_TASBIH_PRESET, text).apply()
+
+    fun getTasbihVibrationEnabled(): Boolean = prefs.getBoolean(KEY_TASBIH_VIBRATION, true)
+    fun saveTasbihVibrationEnabled(enabled: Boolean) = prefs.edit().putBoolean(KEY_TASBIH_VIBRATION, enabled).apply()
 
     // ================= Per-Item Repeat Counts & Daily Session Policy ================= //
 
