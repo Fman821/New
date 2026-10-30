@@ -79,7 +79,7 @@ fun AboutScreen(
                     IconButton(onClick = onBack, modifier = Modifier.testTag("about_back_button")) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "ተመለስ",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -241,42 +241,42 @@ fun AboutScreen(
                     FeatureItemRow(
                         icon = Icons.Default.WbSunny,
                         iconColor = Color(0xFFD9B66F),
-                        title = "የጥዋት አዝካር (Morning Azkar)",
+                        title = "የጥዋት አዝካር",
                         desc = "ከፈጅር በኋላ የሚባሉ ትክክለኛ አዝካሮች ከአማርኛ ትርጉም ጋር"
                     )
 
                     FeatureItemRow(
                         icon = Icons.Default.NightsStay,
                         iconColor = Color(0xFF64B5F6),
-                        title = "የማታ አዝካር (Evening Azkar)",
+                        title = "የማታ አዝካር",
                         desc = "ከዐስር በኋላ እስከ ፀሐይ መጥለቂያ የሚደረጉ ዚክሮች"
                     )
 
                     FeatureItemRow(
                         icon = Icons.Default.TouchApp,
                         iconColor = islamicColors.goldAccent,
-                        title = "ስማርት ተስቢሕ (Interactive Tasbih)",
+                        title = "ተስቢሕ ቆጣሪ",
                         desc = "የንዝረት ድጋፍ፣ የዙር ቆጣሪና ብጁ ዚክሮች ያለው ተስቢሕ"
                     )
 
                     FeatureItemRow(
                         icon = Icons.Default.MenuBook,
                         iconColor = Color(0xFF4CAF50),
-                        title = "የተመረጡ ሱራዎችና ዱዓዎች (Quran & Duas)",
+                        title = "ቅዱስ ቁርኣንና ዱዓዎች",
                         desc = "ሱረቱል ያሲን፣ ዋቂዓህ፣ ሙልክና በርካታ ዕለታዊ ዱዓዎች"
                     )
 
                     FeatureItemRow(
                         icon = Icons.Default.AutoAwesome,
                         iconColor = islamicColors.goldAccent,
-                        title = "99ኙ የአላህ ስሞች (99 Names of Allah)",
+                        title = "99ኙ የአላህ ውብ ስሞች",
                         desc = "አስማኡል ሁስና በአረብኛ፣ በአማርኛ ትርጉምና ማብራሪያ"
                     )
 
                     FeatureItemRow(
                         icon = Icons.Default.Palette,
                         iconColor = Color(0xFFAB47BC),
-                        title = "5 ልዩ እስላማዊ ቴሞች (5 Islamic Themes)",
+                        title = "5 ልዩ እስላማዊ ገጽታዎች",
                         desc = "የቀን ብርሃን፣ የሌሊት ጽሞና፣ የኦቶማን ሰማያዊ፣ ግላስና መስጊድ"
                     )
                 }
