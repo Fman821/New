@@ -149,7 +149,7 @@ fun ThemeSelectorDialog(
                             if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = "የተመረጠ ገጽታ",
                                     tint = islamicColors.goldAccent
                                 )
                             }
