@@ -53,7 +53,7 @@ fun CustomizationSettingsDialog(
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text("የአፕ ማበጀት", fontWeight = FontWeight.Bold)
                 Text(
-                    "አፑን እንደሚመችዎት ያስተካክሉ",
+                    "የአፑን መልክና አጠቃቀም እንደፈለጉ ያብጁ",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -125,7 +125,7 @@ fun CustomizationSettingsDialog(
                         Icon(Icons.Default.CheckCircle, contentDescription = null, tint = colors.goldAccent)
                         Spacer(Modifier.width(9.dp))
                         Text(
-                            "ለውጦችዎ በራስ-ሰር ይቀመጣሉ።",
+                            "የሚያደርጓቸው ለውጦች በራስ-ሰር ይቀመጣሉ።",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
