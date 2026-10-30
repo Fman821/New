@@ -221,7 +221,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "ዕለታዊ አዝካር (Daily Azkar)",
+                            text = "ዕለታዊ አዝካር",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onBackground
@@ -328,7 +328,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "ተጨማሪ አገልግሎቶች (Lifestyle & Tools)",
+                        text = "ተጨማሪ አገልግሎቶች",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
@@ -350,7 +350,7 @@ fun HomeScreen(
                     ) {
                         SecondaryActionCard(
                             title = "ቅዱስ ቁርኣን",
-                            subtitle = "Holy Quran",
+                            subtitle = "የቁርኣን ንባብ",
                             badgeText = "114 ሱራ",
                             icon = Icons.Default.MenuBook,
                             modifier = Modifier.weight(1f),
@@ -359,7 +359,7 @@ fun HomeScreen(
 
                         SecondaryActionCard(
                             title = "ዕለታዊ ዱዓዎች",
-                            subtitle = "Essential Duas",
+                            subtitle = "የተለያዩ ዱዓዎች",
                             badgeText = "ተመርጠው",
                             icon = Icons.Outlined.VolunteerActivism,
                             modifier = Modifier.weight(1f),
@@ -373,7 +373,7 @@ fun HomeScreen(
                     ) {
                         SecondaryActionCard(
                             title = "99 የአላህ ስሞች",
-                            subtitle = "Asmaul Husna",
+                            subtitle = "አል-አስማኡል ሁስና",
                             badgeText = "99 ስሞች",
                             icon = Icons.Default.AutoAwesome,
                             modifier = Modifier.weight(1f),
@@ -382,7 +382,7 @@ fun HomeScreen(
 
                         SecondaryActionCard(
                             title = "ተስቢሕ ቆጣሪ",
-                            subtitle = "Digital Tasbih",
+                            subtitle = "ዲጂታል ቆጣሪ",
                             badgeText = "$tasbihCount / $tasbihTarget",
                             icon = Icons.Default.TouchApp,
                             modifier = Modifier.weight(1f),
@@ -396,7 +396,7 @@ fun HomeScreen(
                     ) {
                         SecondaryActionCard(
                             title = "የሰላት ወቅት",
-                            subtitle = "Prayer Times",
+                            subtitle = "የዕለት ሰላት ሰዓቶች",
                             badgeText = "ትክክለኛ",
                             icon = Icons.Default.Mosque,
                             modifier = Modifier.weight(1f),
@@ -405,7 +405,7 @@ fun HomeScreen(
 
                         SecondaryActionCard(
                             title = "የቂብላ አቅጣጫ",
-                            subtitle = "Qibla Direction",
+                            subtitle = "የቂብላ አቅጣጫ",
                             badgeText = "ካዕባ",
                             icon = Icons.Default.Navigation,
                             modifier = Modifier.weight(1f),
@@ -1361,7 +1361,7 @@ private fun FeaturedVerseCard(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "የዕለቱ የቁርኣን አንቀጽ (Daily Verse)",
+                        text = "የዕለቱ የቁርኣን አንቀጽ",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = islamicColors.goldAccent
@@ -1375,7 +1375,7 @@ private fun FeaturedVerseCard(
                     ) {
                         Icon(
                             imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                            contentDescription = "Bookmark",
+                            contentDescription = if (isBookmarked) "ከተወዳጆች አስወግድ" else "ወደ ተወዳጆች ጨምር",
                             tint = if (isBookmarked) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
@@ -1387,7 +1387,7 @@ private fun FeaturedVerseCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Share",
+                            contentDescription = "የዕለቱን አንቀጽ አጋራ",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
