@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.AlertDialog
@@ -66,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.FontSizeDialog
+import com.example.ui.components.CustomizationSettingsDialog
 import com.example.ui.components.ModernTasbihView
 import com.example.ui.components.ThemeSelectorDialog
 import com.example.ui.screens.AboutScreen
@@ -108,6 +110,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showReminderDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
+    var showCustomizationDialog by remember { mutableStateOf(false) }
     var quranInitialTab by remember { mutableIntStateOf(0) }
     // Intercept back button when inside category or secondary screen
     if (uiState.selectedCategory != null) {
@@ -149,6 +152,17 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         }
                     },
                     actions = {
+                        IconButton(
+                            onClick = { showCustomizationDialog = true },
+                            modifier = Modifier.testTag("customization_settings_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "የአፕ ማበጀት",
+                                tint = islamicColors.goldAccent
+                            )
+                        }
+
                         IconButton(onClick = { showReminderDialog = true }, modifier = Modifier.testTag("reminder_settings_button")) {
                             Icon(Icons.Default.Alarm, contentDescription = "የአዝካር ማስታወሻ", tint = islamicColors.goldAccent)
                         }
@@ -409,6 +423,28 @@ fun MainAppScreen(viewModel: MainViewModel) {
     if (showReminderDialog) { ReminderSettingsDialog(onDismiss = { showReminderDialog = false }) }
 
     // Theme Selector Dialog
+    if (showCustomizationDialog) {
+        CustomizationSettingsDialog(
+            currentTheme = uiState.currentTheme,
+            fontScale = uiState.arabicFontScale,
+            vibrationEnabled = uiState.tasbihVibrationEnabled,
+            onOpenTheme = {
+                showCustomizationDialog = false
+                showThemeDialog = true
+            },
+            onOpenFontSize = {
+                showCustomizationDialog = false
+                showFontDialog = true
+            },
+            onOpenReminders = {
+                showCustomizationDialog = false
+                showReminderDialog = true
+            },
+            onToggleVibration = { viewModel.toggleVibration() },
+            onDismiss = { showCustomizationDialog = false }
+        )
+    }
+
     if (showThemeDialog) {
         ThemeSelectorDialog(
             currentTheme = uiState.currentTheme,
