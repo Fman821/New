@@ -95,7 +95,7 @@ fun AzkarCategoriesScreen(
                         .padding(18.dp)
                 ) {
                     Text(
-                        text = "የአዝካር ማዕከል (Azkar Sanctuary)",
+                        text = "የአዝካር ማዕከል",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -156,7 +156,7 @@ fun AzkarCategoriesScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.WbSunny,
-                                    contentDescription = "Morning",
+                                    contentDescription = "የጥዋት አዝካር",
                                     tint = islamicColors.goldAccent,
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -170,7 +170,7 @@ fun AzkarCategoriesScreen(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Morning Azkar • أذكار الصباح",
+                                    text = "أذكار الصباح",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = islamicColors.goldAccent
                                 )
@@ -180,7 +180,7 @@ fun AzkarCategoriesScreen(
                         if (isComplete) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Done",
+                                contentDescription = "ተጠናቋል",
                                 tint = Color(0xFF4CAF50),
                                 modifier = Modifier.size(26.dp)
                             )
@@ -225,7 +225,7 @@ fun AzkarCategoriesScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = if (isComplete) "አዝካሩን ከልስ (Review)" else if (done > 0) "ቀጥል (Resume)" else "ጀምር (Start)",
+                            text = if (isComplete) "አዝካሩን እንደገና ያንብቡ" else if (done > 0) "ከቆሙበት ይቀጥሉ" else "አዝካር ይጀምሩ",
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -270,7 +270,7 @@ fun AzkarCategoriesScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.NightsStay,
-                                    contentDescription = "Evening",
+                                    contentDescription = "የማታ አዝካር",
                                     tint = islamicColors.goldAccent,
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -284,7 +284,7 @@ fun AzkarCategoriesScreen(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Evening Azkar • أذكار المساء",
+                                    text = "أذكار المساء",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = islamicColors.goldAccent
                                 )
@@ -294,7 +294,7 @@ fun AzkarCategoriesScreen(
                         if (isComplete) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Done",
+                                contentDescription = "ተጠናቋል",
                                 tint = Color(0xFF4CAF50),
                                 modifier = Modifier.size(26.dp)
                             )
@@ -339,7 +339,7 @@ fun AzkarCategoriesScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = if (isComplete) "አዝካሩን ከልስ (Review)" else if (done > 0) "ቀጥል (Resume)" else "ጀምር (Start)",
+                            text = if (isComplete) "አዝካሩን እንደገና ያንብቡ" else if (done > 0) "ከቆሙበት ይቀጥሉ" else "አዝካር ይጀምሩ",
                             fontWeight = FontWeight.Bold
                         )
                     }
