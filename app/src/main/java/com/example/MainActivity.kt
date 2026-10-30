@@ -238,8 +238,11 @@ fun MainAppScreen(viewModel: MainViewModel) {
             if (uiState.selectedCategory == null) {
                 NavigationBar(
                     containerColor = islamicColors.cardBg,
-                    tonalElevation = 6.dp,
-                    modifier = Modifier.testTag("bottom_nav_bar")
+                    tonalElevation = 3.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .testTag("bottom_nav_bar")
                 ) {
                     val tabs = listOf(
                         AppTab.HOME to Icons.Default.Home,
