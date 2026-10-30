@@ -70,7 +70,7 @@ fun QuranAndDuaScreen(
                         Icon(imageVector = Icons.Default.MenuBook, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "ቅዱስ ቁርኣን (Quran)",
+                            text = "ቅዱስ ቁርኣን",
                             fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 13.sp
                         )
@@ -85,7 +85,7 @@ fun QuranAndDuaScreen(
                         Icon(imageVector = Icons.Outlined.VolunteerActivism, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "ዕለታዊ ዱዓዎች (Duas)",
+                            text = "ዕለታዊ ዱዓዎች",
                             fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 13.sp
                         )
