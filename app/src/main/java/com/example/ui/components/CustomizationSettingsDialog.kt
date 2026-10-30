@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
@@ -27,6 +28,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.data.model.AppThemeMode
@@ -48,7 +51,7 @@ fun CustomizationSettingsDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Default.Settings, contentDescription = null, tint = colors.goldAccent) },
         title = {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text("የአፕ ማበጀት", fontWeight = FontWeight.Bold)
                 Text(
                     "አፑን እንደሚመችዎት ያስተካክሉ",
@@ -58,7 +61,8 @@ fun CustomizationSettingsDialog(
             }
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(11.dp)) {
+                SectionLabel("መልክ", "የሚታየውን አቀራረብ ይቀይሩ")
                 SettingRow(
                     icon = { Icon(Icons.Default.Palette, contentDescription = null, tint = colors.goldAccent) },
                     title = "የገጽታ ቅጥ",
@@ -76,6 +80,7 @@ fun CustomizationSettingsDialog(
                     },
                     onClick = onOpenFontSize
                 )
+                SectionLabel("አጠቃቀም", "የአፑን ባህሪያት ያስተካክሉ")
                 Surface(
                     shape = RoundedCornerShape(14.dp),
                     color = colors.cardBg,
@@ -95,7 +100,13 @@ fun CustomizationSettingsDialog(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        Switch(checked = vibrationEnabled, onCheckedChange = { onToggleVibration() })
+                        Switch(
+                            checked = vibrationEnabled,
+                            onCheckedChange = { onToggleVibration() },
+                            modifier = Modifier.semantics {
+                                contentDescription = "የታስቢህ ንዝረት ${if (vibrationEnabled) "አጥፋ" else "አብራ"}"
+                            }
+                        )
                     }
                 }
                 SettingRow(
@@ -104,6 +115,23 @@ fun CustomizationSettingsDialog(
                     detail = "የጠዋትና የማታ ሰዓት ያስተካክሉ",
                     onClick = onOpenReminders
                 )
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = colors.cardBg.copy(alpha = 0.72f)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(11.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = colors.goldAccent)
+                        Spacer(Modifier.width(9.dp))
+                        Text(
+                            "ለውጦችዎ በራስ-ሰር ይቀመጣሉ።",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
@@ -112,6 +140,23 @@ fun CustomizationSettingsDialog(
             }
         }
     )
+}
+
+@Composable
+private fun SectionLabel(title: String, subtitle: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            title,
+            style = MaterialTheme.typography.labelLarge,
+            color = LocalIslamicColors.current.goldAccent,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            subtitle,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 @Composable
