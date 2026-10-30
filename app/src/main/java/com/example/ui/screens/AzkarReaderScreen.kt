@@ -200,7 +200,7 @@ fun AzkarReaderScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = "ተመለስ",
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -242,7 +242,7 @@ fun AzkarReaderScreen(
                         ) {
                             Icon(
                                 imageVector = if (readerMode == AzkarReaderMode.GUIDED) Icons.Default.FormatListBulleted else Icons.Default.ViewCarousel,
-                                contentDescription = if (readerMode == AzkarReaderMode.GUIDED) "Switch to List Mode" else "Switch to Guided Mode",
+                                contentDescription = if (readerMode == AzkarReaderMode.GUIDED) "ወደ ዝርዝር እይታ ቀይር" else "ወደ አንድ በአንድ እይታ ቀይር",
                                 tint = islamicColors.goldAccent
                             )
                         }
@@ -255,7 +255,7 @@ fun AzkarReaderScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.FormatSize,
-                                contentDescription = "Adjust Arabic Font Size",
+                                contentDescription = "የዓረብኛ ፊደል መጠን ቀይር",
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -268,7 +268,7 @@ fun AzkarReaderScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.RestartAlt,
-                                contentDescription = "Reset Session",
+                                contentDescription = "ክፍለ-ጊዜውን እንደገና ጀምር",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -555,7 +555,7 @@ private fun GuidedAzkarView(
                         if (isStepDone) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Done",
+                                contentDescription = "ተጠናቋል",
                                 modifier = Modifier.size(12.dp),
                                 tint = if (isSelected) Color.Black else islamicColors.goldAccent
                             )
@@ -650,7 +650,7 @@ private fun GuidedAzkarView(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.VolumeUp,
-                                    contentDescription = "Read Amharic translation aloud",
+                                    contentDescription = "የአማርኛ ትርጉሙን አንብብ",
                                     tint = if (speechReady) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
                                 )
                             }
@@ -672,13 +672,13 @@ private fun GuidedAzkarView(
                                     } else if (isPlaying) {
                                         Icon(
                                             imageVector = Icons.Outlined.Pause,
-                                            contentDescription = "Pause",
+                                            contentDescription = "አቁም",
                                             tint = islamicColors.goldAccent
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.Default.PlayArrow,
-                                            contentDescription = "Play Audio",
+                                            contentDescription = "ድምፅ አጫውት",
                                             tint = islamicColors.goldAccent
                                         )
                                     }
@@ -694,7 +694,7 @@ private fun GuidedAzkarView(
                             ) {
                                 Icon(
                                     imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                                    contentDescription = "Favorite",
+                                    contentDescription = "ወደ ተወዳጆች ጨምር",
                                     tint = if (isFavorite) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -728,7 +728,7 @@ private fun GuidedAzkarView(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Share,
-                                    contentDescription = "Share",
+                                    contentDescription = "አጋራ",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -876,7 +876,7 @@ private fun GuidedAzkarView(
                             if (isItemDone) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Complete",
+                                    contentDescription = "ተጠናቋል",
                                     tint = Color.Black,
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -895,7 +895,7 @@ private fun GuidedAzkarView(
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(
-                                text = if (isItemDone) "ተጠናቋል! (Completed)" else "ቆጣሪውን ይንኩ (Tap to Count)",
+                                text = if (isItemDone) "ተጠናቋል!" else "ቆጣሪውን ይንኩ",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = textColor
@@ -918,7 +918,7 @@ private fun GuidedAzkarView(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
-                                    contentDescription = "Reset",
+                                    contentDescription = "ዳግም አስጀምር",
                                     tint = if (isItemDone) Color.Black.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -979,7 +979,7 @@ private fun GuidedAzkarView(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Completed",
+                                contentDescription = "ተጠናቋል",
                                 tint = islamicColors.goldAccent,
                                 modifier = Modifier.size(28.dp)
                             )
@@ -1000,7 +1000,7 @@ private fun GuidedAzkarView(
                         }
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "View Summary",
+                            contentDescription = "ማጠቃለያውን ተመልከት",
                             tint = islamicColors.goldAccent
                         )
                     }
@@ -1036,11 +1036,11 @@ private fun GuidedAzkarView(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Previous",
+                        contentDescription = "ያለፈው",
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("ወደ ኋላ (Prev)")
+                    Text("ወደ ኋላ")
                 }
 
                 Text(
@@ -1066,13 +1066,13 @@ private fun GuidedAzkarView(
                     modifier = Modifier.testTag("guided_next_button")
                 ) {
                     Text(
-                        text = if (currentIndex < items.size - 1) "ቀጣይ (Next)" else "አጠናቅ (Finish)",
+                        text = if (currentIndex < items.size - 1) "ቀጣይ" else "ጨርስ",
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Next",
+                        contentDescription = "ቀጣይ",
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -1130,18 +1130,18 @@ private fun ListAzkarView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("azkar_search_input"),
-                placeholder = { Text("አዝካር ይፈልጉ (Search Azkar)...") },
+                placeholder = { Text("አዝካር ይፈልጉ...") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
+                        contentDescription = "ፈልግ",
                         tint = islamicColors.goldAccent
                     )
                 },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { onSearchQueryChange("") }) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "Clear")
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "አጽዳ")
                         }
                     }
                 },
