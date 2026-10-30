@@ -90,7 +90,6 @@ fun AzkarCard(
     val isPlaying = isAudioForThis && audioState is AudioPlaybackState.Playing
     val isBuffering = isAudioForThis && audioState is AudioPlaybackState.Buffering
     val isPaused = isAudioForThis && audioState is AudioPlaybackState.Paused
-    val audioError = (audioState as? AudioPlaybackState.Error)?.message
 
     val borderStroke = BorderStroke(
         width = if (islamicColors.isGlassmorphism) 1.5.dp else 1.dp,
@@ -242,15 +241,6 @@ fun AzkarCard(
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
             )
-
-            if (audioError != null) {
-                Text(
-                    text = audioError,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
-                )
-            }
 
             // Geometric divider
             IslamicGeometricDivider(
