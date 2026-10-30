@@ -485,15 +485,7 @@ private fun SurahReaderView(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        // Transliteration if present
-                        if (verse.transliteration.isNotBlank()) {
-                            Text(
-                                text = verse.transliteration,
-                                style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
-                                color = islamicColors.goldAccent,
-                                modifier = Modifier.padding(bottom = 6.dp)
-                            )
-                        }
+                        // Amharic translation only (Quran transliteration is intentionally hidden).
 
                         // Amharic Translation
                         Text(
