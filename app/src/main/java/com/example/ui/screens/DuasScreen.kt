@@ -95,7 +95,7 @@ fun DuasScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "ጠቃሚ ዱዓዎች (Essential Duas)",
+                    text = "ጠቃሚ ዱዓዎች",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -129,7 +129,7 @@ fun DuasScreen(
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Clear",
+                                    contentDescription = "ፍለጋውን አጽዳ",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -207,7 +207,7 @@ fun DuasScreen(
                                 ) {
                                     Icon(
                                         imageVector = if (isFav) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                                        contentDescription = "Favorite",
+                                        contentDescription = "ወደ ተወዳጆች አክል",
                                         tint = if (isFav) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
@@ -225,7 +225,7 @@ fun DuasScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Share,
-                                        contentDescription = "Share",
+                                        contentDescription = "አጋራ",
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
