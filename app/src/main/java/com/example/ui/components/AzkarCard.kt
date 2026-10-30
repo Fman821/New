@@ -331,14 +331,14 @@ fun AzkarCard(
                                         showResetConfirm = false
                                     }
                                 ) {
-                                    Text("አጽዳ (Reset)", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+                                    Text("አጽዳ", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
                                 }
                             },
                             dismissButton = {
                                 androidx.compose.material3.TextButton(
                                     onClick = { showResetConfirm = false }
                                 ) {
-                                    Text("ተመለስ (Cancel)")
+                                    Text("ተመለስ")
                                 }
                             }
                         )
@@ -365,7 +365,7 @@ fun AzkarCard(
                             if (isDone) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Completed",
+                                    contentDescription = "አዝካሩ ተጠናቋል",
                                     tint = textColor,
                                     modifier = Modifier.size(16.dp)
                                 )
