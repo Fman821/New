@@ -94,7 +94,7 @@ fun FavoritesScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "በቀላሉ ለማግኘት የመረጧቸው ${combinedFavorites.size} ማስታወሻዎች",
+                    text = "በቀላሉ ለማግኘት ያስቀመጧቸው ${combinedFavorites.size} አዝካሮችና ዱዓዎች",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -124,7 +124,7 @@ fun FavoritesScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "በማንኛውም አዝካር ወይም ዱዓ ላይ ያለውን የኮከብ ምልክት (★) በመጫን እዚህ ማስቀመጥ ይችላሉ።",
+                        text = "በአዝካር ወይም ዱዓ ላይ ያለውን የኮከብ ምልክት በመጫን ወደዚህ ያክሉ።",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
