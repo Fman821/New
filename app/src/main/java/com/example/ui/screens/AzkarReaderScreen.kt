@@ -35,6 +35,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -174,8 +175,10 @@ fun AzkarReaderScreen(
         // TOP APP BAR / HEADER
         // =====================================================================
         Surface(
+            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp),
             color = islamicColors.cardBg,
-            border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.4f)),
+            border = BorderStroke(1.dp, islamicColors.cardBorder.copy(alpha = 0.45f)),
+            shadowElevation = 2.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -195,7 +198,7 @@ fun AzkarReaderScreen(
                         IconButton(
                             onClick = onBack,
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(44.dp)
                                 .testTag("reader_back_button")
                         ) {
                             Icon(
