@@ -120,7 +120,7 @@ fun PrayerQiblaScreen(
                         Icon(imageVector = Icons.Default.Mosque, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "የሰላት ወቅቶች (Prayer Times)",
+                            text = "የሰላት ወቅቶች",
                             fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 13.sp
                         )
@@ -135,7 +135,7 @@ fun PrayerQiblaScreen(
                         Icon(imageVector = Icons.Default.Navigation, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "ቂብላ (Qibla)",
+                            text = "ቂብላ",
                             fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 13.sp
                         )
@@ -245,7 +245,7 @@ private fun PrayerTimesTabContent(prayerSchedule: PrayerSchedule) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "ቀጣይ ሰላት (Next Prayer)",
+                            text = "ቀጣይ ሰላት",
                             style = MaterialTheme.typography.labelMedium,
                             color = islamicColors.goldAccent,
                             fontWeight = FontWeight.Bold
@@ -314,7 +314,7 @@ private fun PrayerTimesTabContent(prayerSchedule: PrayerSchedule) {
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "ትክክለኛ የሥነ-ፈለክ ቀመር (Astronomical Solar Angle)",
+                    text = "በሥነ-ፈለክ ስሌት የተመሠረተ",
                     style = MaterialTheme.typography.labelSmall,
                     color = islamicColors.goldAccent.copy(alpha = 0.8f)
                 )
