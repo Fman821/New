@@ -98,14 +98,14 @@ fun QuranScreen(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
+                        contentDescription = "ፈልግ",
                         tint = islamicColors.goldAccent
                     )
                 },
                 trailingIcon = {
                     if (searchQuery.isNotBlank()) {
                         IconButton(onClick = { searchQuery = "" }) {
-                            Icon(imageVector = Icons.Default.Clear, contentDescription = "Clear")
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = "ፍለጋውን አጽዳ")
                         }
                     }
                 },
@@ -148,7 +148,7 @@ fun QuranScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "የተመረጡ ሱራዎችና አናቅጽ (Featured)",
+                                    text = "ተመራጭ ሱራዎች",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onBackground
@@ -177,7 +177,7 @@ fun QuranScreen(
 
                     item {
                         Text(
-                            text = "ሁሉም ሱራዎች (All Surahs - 114)",
+                            text = "ሁሉም ሱራዎች (114)",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground,
@@ -348,7 +348,7 @@ private fun SurahReaderView(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "ተመለስ",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -388,7 +388,7 @@ private fun SurahReaderView(
                         context.startActivity(Intent.createChooser(shareIntent, "ሱራውን ያጋሩ"))
                     }
                 ) {
-                    Icon(imageVector = Icons.Default.Share, contentDescription = "Share", tint = islamicColors.goldAccent)
+                    Icon(imageVector = Icons.Default.Share, contentDescription = "አጋራ", tint = islamicColors.goldAccent)
                 }
             }
         }
