@@ -153,7 +153,7 @@ fun AzkarCard(
                     if (item.audio.isNotBlank()) {
                         IconButton(
                             onClick = { onToggleAudio(item.audio) },
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size(44.dp)
                         ) {
                             if (isBuffering) {
                                 CircularProgressIndicator(
@@ -164,13 +164,13 @@ fun AzkarCard(
                             } else if (isPlaying) {
                                 Icon(
                                     imageVector = Icons.Outlined.Pause,
-                                    contentDescription = "Pause Audio",
+                                    contentDescription = "ድምፁን አቁም",
                                     tint = islamicColors.goldAccent
                                 )
                             } else {
                                 Icon(
                                     imageVector = Icons.Default.PlayArrow,
-                                    contentDescription = "Play Audio",
+                                    contentDescription = "ድምፅ አጫውት",
                                     tint = islamicColors.goldAccent
                                 )
                             }
@@ -180,11 +180,11 @@ fun AzkarCard(
                     // Favorite Button
                     IconButton(
                         onClick = onToggleFavorite,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(44.dp)
                     ) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                            contentDescription = "Favorite",
+                            contentDescription = if (isFavorite) "ከተወዳጆች አስወግድ" else "ወደ ተወዳጆች ጨምር",
                             tint = if (isFavorite) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -212,11 +212,11 @@ fun AzkarCard(
                             }
                             context.startActivity(Intent.createChooser(shareIntent, "አዝካሩን ያጋሩ"))
                         },
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(44.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Share Azkar",
+                            contentDescription = "አዝካሩን አጋራ",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -259,11 +259,18 @@ fun AzkarCard(
 
             // Amharic Translation
             Text(
+                text = "ትርጉም",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = islamicColors.goldAccent,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
                 text = item.am,
                 style = MaterialTheme.typography.bodyLarge,
-                lineHeight = 24.sp,
+                lineHeight = 28.sp,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 10.dp)
             )
 
             // Footer: Source and Repeat Counter Button
@@ -289,11 +296,11 @@ fun AzkarCard(
                     if (completedCount > 0) {
                         IconButton(
                             onClick = { showResetConfirm = true },
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(44.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "Reset Count",
+                                contentDescription = "ቆጣሪውን ዳግም አስጀምር",
                                 modifier = Modifier.size(16.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
