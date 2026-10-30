@@ -67,6 +67,27 @@ class AzkarProvider extends ChangeNotifier {
     _tasbihCount = prefs.getInt('pref_tasbih_count') ?? 0;
     _tasbihTarget = prefs.getInt('pref_tasbih_target') ?? 33;
     _tasbihTotal = prefs.getInt('pref_tasbih_total') ?? 0;
+    _tasbihLaps = prefs.getInt('pref_tasbih_laps') ?? 0;
+    _tasbihPreset = prefs.getString('pref_tasbih_preset') ?? "ሱብሓነላህ";
+    _vibrationEnabled = prefs.getBool('pref_vibration_enabled') ?? true;
+
+    final savedCounts = prefs.getString('pref_item_completed_counts');
+    if (savedCounts != null && savedCounts.isNotEmpty) {
+      try {
+        final decoded = json.decode(savedCounts);
+        if (decoded is Map<String, dynamic>) {
+          for (final entry in decoded.entries) {
+            final value = entry.value;
+            final count = value is int ? value : int.tryParse(value.toString());
+            if (count != null && count >= 0) {
+              _itemCompletedCounts[entry.key] = count;
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Could not restore Azkar progress: $e');
+      }
+    }
 
     try {
       final azkarStr = await rootBundle.loadString('assets/azkar.json');
@@ -115,14 +136,22 @@ class AzkarProvider extends ChangeNotifier {
   }
 
   void incrementItemCount(String id, int maxRepeat) {
-    int current = _itemCompletedCounts[id] ?? 0;
+    if (maxRepeat <= 0) return;
+    final current = (_itemCompletedCounts[id] ?? 0).clamp(0, maxRepeat);
     _itemCompletedCounts[id] = current < maxRepeat ? current + 1 : 0;
     notifyListeners();
+    _saveItemCounts();
   }
 
   void resetItemCount(String id) {
     _itemCompletedCounts[id] = 0;
     notifyListeners();
+    _saveItemCounts();
+  }
+
+  Future<void> _saveItemCounts() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('pref_item_completed_counts', json.encode(_itemCompletedCounts));
   }
 
   void incrementTasbih() {
@@ -151,7 +180,7 @@ class AzkarProvider extends ChangeNotifier {
   }
 
   void setTasbihTarget(int target) {
-    _tasbihTarget = target;
+    _tasbihTarget = target.clamp(1, 10000);
     _tasbihCount = 0;
     notifyListeners();
     _saveTasbih();
@@ -160,11 +189,17 @@ class AzkarProvider extends ChangeNotifier {
   void setTasbihPreset(String preset) {
     _tasbihPreset = preset;
     notifyListeners();
+    SharedPreferences.getInstance().then(
+      (prefs) => prefs.setString('pref_tasbih_preset', preset),
+    );
   }
 
   void toggleVibration() {
     _vibrationEnabled = !_vibrationEnabled;
     notifyListeners();
+    SharedPreferences.getInstance().then(
+      (prefs) => prefs.setBool('pref_vibration_enabled', _vibrationEnabled),
+    );
   }
 
   Future<void> _saveTasbih() async {
@@ -172,6 +207,7 @@ class AzkarProvider extends ChangeNotifier {
     await prefs.setInt('pref_tasbih_count', _tasbihCount);
     await prefs.setInt('pref_tasbih_target', _tasbihTarget);
     await prefs.setInt('pref_tasbih_total', _tasbihTotal);
+    await prefs.setInt('pref_tasbih_laps', _tasbihLaps);
   }
 
   Future<void> toggleAudio(String url) async {
