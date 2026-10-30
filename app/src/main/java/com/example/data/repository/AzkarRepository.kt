@@ -155,11 +155,11 @@ class AzkarRepository(private val context: Context) {
     // ================= Theme & Preferences ================= //
 
     fun getSavedTheme(): AppThemeMode {
-        val name = prefs.getString(KEY_THEME, AppThemeMode.SACRED_LIGHT.name)
+        val name = prefs.getString(KEY_THEME, AppThemeMode.DARK_EMERALD_NEON.name)
         return try {
-            AppThemeMode.valueOf(name ?: AppThemeMode.SACRED_LIGHT.name)
+            AppThemeMode.valueOf(name ?: AppThemeMode.DARK_EMERALD_NEON.name)
         } catch (_: Exception) {
-            AppThemeMode.SACRED_LIGHT
+            AppThemeMode.DARK_EMERALD_NEON
         }
     }
 
