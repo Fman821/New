@@ -69,7 +69,7 @@ fun AboutScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "ስለ መተግበሪያው (About)",
+                        text = "ስለ መተግበሪያው",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -156,7 +156,7 @@ fun AboutScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Daily Remembrance, Peaceful Life.",
+                        text = "ዕለታዊ ዝክር፣ ሰላማዊ ሕይወት",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFFF2D99A),
                         fontWeight = FontWeight.Medium,
@@ -191,14 +191,14 @@ fun AboutScreen(
                     modifier = Modifier.padding(18.dp)
                 ) {
                     Text(
-                        text = "ስለ አማርኛ አዝካር (About the App)",
+                        text = "ስለ አማርኛ አዝካር",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = islamicColors.goldAccent
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Amharic Azkar is an Islamic companion designed to help users read and follow their daily Morning and Evening Azkar through Arabic Dhikr, Amharic translations, repetition counters, and daily progress tracking.",
+                        text = "ይህ መተግበሪያ የጥዋትና የማታ አዝካሮችን በአረብኛ ጽሑፍ፣ በአማርኛ ትርጉም፣ በድግግሞሽ ቆጣሪና በዕለታዊ እድገት ክትትል በቀላሉ እንዲያነቡ የሚረዳ መንፈሳዊ መተግበሪያ ነው።",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 22.sp
@@ -232,7 +232,7 @@ fun AboutScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "ዋና ዋና አገልግሎቶች (Key Features)",
+                        text = "ዋና ዋና አገልግሎቶች",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = islamicColors.goldAccent
@@ -305,7 +305,7 @@ fun AboutScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "ስሪት (Version)",
+                            text = "ስሪት",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -325,12 +325,12 @@ fun AboutScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "ቋንቋዎች (Languages)",
+                            text = "ቋንቋዎች",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "አማርኛ • عربي • English",
+                            text = "አማርኛ • ዓረብኛ • እንግሊዝኛ",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
