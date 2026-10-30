@@ -152,6 +152,70 @@ class AzkarRepository(private val context: Context) {
         return reader.use { it.readText() }
     }
 
+    // ================= Backup & Restore ================= //
+
+    /**
+     * Export only this app's saved preferences. The backup never includes account credentials.
+     */
+    fun exportBackupJson(): String {
+        val values = JSONObject()
+        for ((key, value) in prefs.all) {
+            when (value) {
+                is String -> values.put(key, JSONObject().put("type", "string").put("value", value))
+                is Int -> values.put(key, JSONObject().put("type", "int").put("value", value))
+                is Long -> values.put(key, JSONObject().put("type", "long").put("value", value))
+                is Float -> values.put(key, JSONObject().put("type", "float").put("value", value.toDouble()))
+                is Boolean -> values.put(key, JSONObject().put("type", "boolean").put("value", value))
+                is Set<*> -> values.put(key, JSONObject().put("type", "string_set").put("value", JSONArray(value.filterIsInstance<String>())))
+            }
+        }
+        return JSONObject()
+            .put("format", "amharic_azkar_backup")
+            .put("version", 1)
+            .put("created_at", System.currentTimeMillis())
+            .put("preferences", values)
+            .toString(2)
+    }
+
+    /**
+     * Restore valid preference entries as a merge. Existing data not present in the backup is kept.
+     */
+    fun restoreBackupJson(json: String): Boolean {
+        return try {
+            val root = JSONObject(json)
+            if (root.optString("format") != "amharic_azkar_backup" ||
+                root.optInt("version", -1) != 1
+            ) return false
+
+            val values = root.optJSONObject("preferences") ?: return false
+            val editor = prefs.edit()
+            val keys = values.keys()
+            while (keys.hasNext()) {
+                val key = keys.next()
+                val entry = values.optJSONObject(key) ?: continue
+                when (entry.optString("type")) {
+                    "string" -> editor.putString(key, entry.getString("value"))
+                    "int" -> editor.putInt(key, entry.getInt("value"))
+                    "long" -> editor.putLong(key, entry.getLong("value"))
+                    "float" -> editor.putFloat(key, entry.getDouble("value").toFloat())
+                    "boolean" -> editor.putBoolean(key, entry.getBoolean("value"))
+                    "string_set" -> {
+                        val array = entry.optJSONArray("value") ?: continue
+                        val set = mutableSetOf<String>()
+                        for (i in 0 until array.length()) {
+                            val item = array.optString(i, "")
+                            if (item.isNotEmpty()) set.add(item)
+                        }
+                        editor.putStringSet(key, set)
+                    }
+                }
+            }
+            editor.commit()
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     // ================= Theme & Preferences ================= //
 
     fun getSavedTheme(): AppThemeMode {
