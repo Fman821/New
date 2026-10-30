@@ -120,7 +120,7 @@ fun AzkarListScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = "ተመለስ",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -200,7 +200,7 @@ fun AzkarListScreen(
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Clear",
+                                    contentDescription = "ፍለጋውን አጽዳ",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
