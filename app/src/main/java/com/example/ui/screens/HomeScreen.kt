@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import android.content.Intent
+import android.icu.util.IslamicCalendar
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -192,6 +193,13 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+
+        // =====================================================================
+        // HIJRI DATE CARD
+        // =====================================================================
+        item {
+            HijriDateCard()
         }
 
         // =====================================================================
@@ -473,6 +481,66 @@ fun HomeScreen(
         // Bottom breathing space
         item {
             Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+
+/**
+ * Displays the current Hijri date using Android's built-in ICU calendar.
+ * Available from Android 7.0 (API 24), matching the app's minimum SDK.
+ */
+@Composable
+private fun HijriDateCard() {
+    val islamicColors = LocalIslamicColors.current
+    val hijri = remember {
+        IslamicCalendar().apply { timeInMillis = System.currentTimeMillis() }
+    }
+    val day = hijri.get(IslamicCalendar.DAY_OF_MONTH)
+    val month = hijri.get(IslamicCalendar.MONTH)
+    val year = hijri.get(IslamicCalendar.YEAR)
+    val monthsAm = listOf(
+        "مُحَرَّم", "صَفَر", "ربيع الأول", "ربيع الثاني",
+        "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان",
+        "رمضان", "شوال", "ذو القعدة", "ذو الحجة"
+    )
+    val monthName = monthsAm.getOrElse(month) { "" }
+
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = islamicColors.cardBg,
+        border = BorderStroke(1.dp, islamicColors.goldAccent.copy(alpha = 0.55f)),
+        modifier = Modifier.fillMaxWidth().testTag("hijri_date_card")
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 13.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "የሂጅራ ቀን (Hijri Date)",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = islamicColors.goldAccent,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "$day $monthName $year ሂጅራ",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(
+                    text = "የእስልምና ቀን መቁጠሪያ",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            IslamicEmblemMotif(
+                primaryColor = islamicColors.arabicCalligraphyColor,
+                accentColor = islamicColors.goldAccent,
+                modifier = Modifier.size(42.dp)
+            )
         }
     }
 }
