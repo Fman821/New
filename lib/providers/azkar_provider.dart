@@ -137,7 +137,7 @@ class AzkarProvider extends ChangeNotifier {
 
   void incrementItemCount(String id, int maxRepeat) {
     if (maxRepeat <= 0) return;
-    final current = (_itemCompletedCounts[id] ?? 0).clamp(0, maxRepeat);
+    final current = (_itemCompletedCounts[id] ?? 0).clamp(0, maxRepeat).toInt();
     _itemCompletedCounts[id] = current < maxRepeat ? current + 1 : 0;
     notifyListeners();
     _saveItemCounts();
@@ -180,7 +180,7 @@ class AzkarProvider extends ChangeNotifier {
   }
 
   void setTasbihTarget(int target) {
-    _tasbihTarget = target.clamp(1, 10000);
+    _tasbihTarget = target.clamp(1, 10000).toInt();
     _tasbihCount = 0;
     notifyListeners();
     _saveTasbih();
