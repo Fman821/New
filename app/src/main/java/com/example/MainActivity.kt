@@ -124,7 +124,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     title = {
                         Column {
                             Text(
-                                text = "Amharic Azkar",
+                                text = "አማርኛ አዝካር",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -142,7 +142,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                             IconButton(onClick = { viewModel.setTab(AppTab.HOME) }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back",
+                                    contentDescription = "ተመለስ",
                                     tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
@@ -160,7 +160,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = "99 Names of Allah",
+                                contentDescription = "የአላህ 99 ስሞች",
                                 tint = if (uiState.currentTab == AppTab.NAMES) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -172,7 +172,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Star,
-                                contentDescription = "Favorites",
+                                contentDescription = "ተወዳጆች",
                                 tint = if (uiState.currentTab == AppTab.FAVORITES) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -184,7 +184,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = "About Amharic Azkar",
+                                contentDescription = "ስለ አፑ",
                                 tint = if (uiState.currentTab == AppTab.ABOUT) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -196,7 +196,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.FormatSize,
-                                contentDescription = "Font Size",
+                                contentDescription = "የፊደል መጠን",
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -208,7 +208,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Palette,
-                                contentDescription = "Theme Switcher",
+                                contentDescription = "የገጽታ ምርጫ",
                                 tint = islamicColors.goldAccent
                             )
                         }
