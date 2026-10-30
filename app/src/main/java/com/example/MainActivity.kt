@@ -529,7 +529,7 @@ private fun ReminderSettingsDialog(onDismiss: () -> Unit) {
                         eveningEnabled = it; save("evening", it, eveningHour, eveningMinute)
                     })
                 }
-                Text("የNotification ፈቃድ መኖሩን አረጋግጥ። የባትሪ ቁጠባ ሁኔታ ማስታወሻውን ሊያዘገይ ይችላል።", style = MaterialTheme.typography.bodySmall)
+                Text("የማሳወቂያ ፈቃዱ መኖሩን ያረጋግጡ። የባትሪ ቁጠባ ሁኔታ ማስታወሻውን ሊያዘገይ ይችላል።", style = MaterialTheme.typography.bodySmall)
             }
         },
         confirmButton = { Button(onClick = onDismiss) { Text("ጨርስ") } }
