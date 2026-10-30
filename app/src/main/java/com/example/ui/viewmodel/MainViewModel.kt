@@ -190,6 +190,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
+    // ================= Backup & Restore ================= //
+
+    fun exportBackupJson(): String = repository.exportBackupJson()
+
+    fun restoreBackupJson(json: String): Boolean {
+        val restored = repository.restoreBackupJson(json)
+        if (restored) loadInitialData()
+        return restored
+    }
+
     // ================= Navigation ================= //
 
     fun setTab(tab: AppTab) {
