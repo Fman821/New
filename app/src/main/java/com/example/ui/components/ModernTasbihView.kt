@@ -193,14 +193,14 @@ fun ModernTasbihView(
                 IconButton(onClick = onToggleVibration) {
                     Icon(
                         imageVector = Icons.Default.Vibration,
-                        contentDescription = "Vibration Toggle",
+                        contentDescription = "ንዝረት አብራ ወይም አጥፋ",
                         tint = if (vibrationEnabled) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 }
                 IconButton(onClick = { showResetDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Reset Counter",
+                        contentDescription = "ቆጣሪውን ዜሮ አድርግ",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -228,14 +228,14 @@ fun ModernTasbihView(
                                     showResetDialog = false
                                 }
                             ) {
-                                Text("አጽዳ (Reset)", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+                                Text("አጽዳ", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
                             }
                         },
                         dismissButton = {
                             androidx.compose.material3.TextButton(
                                 onClick = { showResetDialog = false }
                             ) {
-                                Text("ተመለስ (Cancel)")
+                                Text("ተመለስ")
                             }
                         }
                     )
@@ -362,7 +362,7 @@ fun ModernTasbihView(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "ዙር (Laps)",
+                    text = "ዙር",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
