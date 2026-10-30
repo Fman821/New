@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.Crossfade
@@ -19,8 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.FormatSize
-import androidx.compose.material.icons.filled.FileDownload
-import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MenuBook
@@ -51,11 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.widget.Toast
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.components.FontSizeDialog
 import com.example.ui.components.ModernTasbihView
@@ -100,42 +94,6 @@ fun MainAppScreen(viewModel: MainViewModel) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
     var quranInitialTab by remember { mutableIntStateOf(0) }
-    val context = LocalContext.current
-
-    val exportBackupLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json")
-    ) { uri ->
-        if (uri != null) {
-            val success = runCatching {
-                context.contentResolver.openOutputStream(uri)?.bufferedWriter()?.use {
-                    it.write(viewModel.exportBackupJson())
-                } ?: error("Unable to open destination")
-            }.isSuccess
-            Toast.makeText(
-                context,
-                if (success) "Backup saved successfully" else "Backup could not be saved",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    val importBackupLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument()
-    ) { uri ->
-        if (uri != null) {
-            val result = runCatching {
-                context.contentResolver.openInputStream(uri)?.bufferedReader()?.use {
-                    viewModel.restoreBackupJson(it.readText())
-                } ?: false
-            }.getOrDefault(false)
-            Toast.makeText(
-                context,
-                if (result) "Backup restored. Existing data was preserved." else "Invalid backup file",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
     // Intercept back button when inside category or secondary screen
     if (uiState.selectedCategory != null) {
         BackHandler { viewModel.closeCategory() }
@@ -176,28 +134,6 @@ fun MainAppScreen(viewModel: MainViewModel) {
                         }
                     },
                     actions = {
-                        // Export and restore app data
-                        IconButton(
-                            onClick = { exportBackupLauncher.launch("amharic-azkar-backup.json") },
-                            modifier = Modifier.testTag("backup_export_button")
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FileDownload,
-                                contentDescription = "Export backup",
-                                tint = islamicColors.goldAccent
-                            )
-                        }
-                        IconButton(
-                            onClick = { importBackupLauncher.launch(arrayOf("application/json", "text/*")) },
-                            modifier = Modifier.testTag("backup_import_button")
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FileUpload,
-                                contentDescription = "Restore backup",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-
                         // 99 Names shortcut
                         IconButton(
                             onClick = { viewModel.setTab(AppTab.NAMES) },
