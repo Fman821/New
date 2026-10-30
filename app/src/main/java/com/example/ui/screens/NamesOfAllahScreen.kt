@@ -94,7 +94,7 @@ fun NamesOfAllahScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "የአላህ 99 ውብ ስሞች (Asmaul Husna)",
+                    text = "የአላህ 99 ውብ ስሞች",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -112,7 +112,7 @@ fun NamesOfAllahScreen(
                     onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
-                            "በስሙ ወይም በትርጉሙ ይፈልጉ...",
+                            "በአረብኛ ስም፣ በትርጉም ወይም በቁጥር ይፈልጉ...",
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
@@ -128,7 +128,7 @@ fun NamesOfAllahScreen(
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Clear",
+                                    contentDescription = "ፍለጋውን አጽዳ",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
