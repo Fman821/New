@@ -99,6 +99,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val tasbihCount = repository.getTasbihCount()
             val tasbihTarget = repository.getTasbihTarget()
             val tasbihTotal = repository.getTasbihTotal()
+            val tasbihLaps = repository.getTasbihLaps()
+            val tasbihPresetText = repository.getTasbihPreset()
+            val tasbihVibrationEnabled = repository.getTasbihVibrationEnabled()
             val savedCityId = repository.getSavedCityId()
 
             val city = PrayerTimesCalculator.DEFAULT_CITIES.firstOrNull { it.id == savedCityId }
@@ -125,6 +128,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     tasbihCount = tasbihCount,
                     tasbihTarget = tasbihTarget,
                     tasbihTotal = tasbihTotal,
+                    tasbihLaps = tasbihLaps,
+                    tasbihPresetText = tasbihPresetText,
+                    tasbihVibrationEnabled = tasbihVibrationEnabled,
                     currentCity = city,
                     prayerSchedule = schedule,
                     categories = categories,
@@ -372,6 +378,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val finalCount = if (nextCount >= target) 0 else nextCount
 
         repository.saveTasbihCount(finalCount)
+        repository.saveTasbihLaps(laps)
 
         _uiState.update {
             it.copy(
@@ -393,11 +400,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setTasbihPreset(text: String) {
+        repository.saveTasbihPreset(text)
         _uiState.update { it.copy(tasbihPresetText = text) }
     }
 
     fun toggleVibration() {
-        _uiState.update { it.copy(tasbihVibrationEnabled = !it.tasbihVibrationEnabled) }
+        val enabled = !_uiState.value.tasbihVibrationEnabled
+        repository.saveTasbihVibrationEnabled(enabled)
+        _uiState.update { it.copy(tasbihVibrationEnabled = enabled) }
     }
 
     // ================= Audio ================= //
