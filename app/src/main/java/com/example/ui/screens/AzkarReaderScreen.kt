@@ -2,6 +2,7 @@ package com.example.ui.screens
 
 import android.content.Intent
 import android.os.SystemClock
+import android.speech.tts.TextToSpeech
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -49,6 +50,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ViewCarousel
 import androidx.compose.material.icons.outlined.Pause
@@ -69,6 +71,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -91,6 +94,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 import com.example.data.model.AzkarCategory
 import com.example.data.model.AzkarItem
 import com.example.data.model.AzkarReaderMode
@@ -465,6 +469,30 @@ private fun GuidedAzkarView(
     val context = LocalContext.current
     val islamicColors = LocalIslamicColors.current
     val haptic = LocalHapticFeedback.current
+    var speechReady by remember { mutableStateOf(false) }
+    var speechEngine by remember { mutableStateOf<TextToSpeech?>(null) }
+
+    DisposableEffect(context) {
+        val engine = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val amharicResult = speechEngine?.setLanguage(Locale("am", "ET"))
+                speechReady = amharicResult != TextToSpeech.LANG_MISSING_DATA &&
+                    amharicResult != TextToSpeech.LANG_NOT_SUPPORTED
+                if (!speechReady) {
+                    val arabicResult = speechEngine?.setLanguage(Locale("ar"))
+                    speechReady = arabicResult != TextToSpeech.LANG_MISSING_DATA &&
+                        arabicResult != TextToSpeech.LANG_NOT_SUPPORTED
+                }
+            }
+        }
+        speechEngine = engine
+        onDispose {
+            engine.stop()
+            engine.shutdown()
+            speechEngine = null
+            speechReady = false
+        }
+    }
 
     val item = items[currentIndex]
     val completedCount = itemCompletedCounts["${category.id}_${item.id}"]
@@ -607,6 +635,26 @@ private fun GuidedAzkarView(
                         }
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Read the Amharic translation aloud using the phone's installed TTS voice.
+                            IconButton(
+                                onClick = {
+                                    val engine = speechEngine
+                                    if (engine != null && speechReady) {
+                                        engine.speak(item.am, TextToSpeech.QUEUE_FLUSH, null, "azkar_translation")
+                                    }
+                                },
+                                enabled = speechReady,
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag("guided_tts_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.VolumeUp,
+                                    contentDescription = "Read Amharic translation aloud",
+                                    tint = if (speechReady) islamicColors.goldAccent else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
+                                )
+                            }
+
                             // Audio button if audio available
                             if (item.audio.isNotBlank()) {
                                 IconButton(
