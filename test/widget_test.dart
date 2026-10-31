@@ -27,7 +27,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byType(Scaffold), findsOneWidget);
-    expect(find.text('Amharic Azkar • አማርኛ አዝካር'), findsOneWidget);
+    expect(find.text('Amharic Azkar'), findsOneWidget);
     expect(find.text('ዋና ገጽ'), findsOneWidget);
   });
 }
