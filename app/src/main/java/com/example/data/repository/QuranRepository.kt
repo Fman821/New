@@ -110,7 +110,7 @@ object QuranRepository {
             number = 113,
             nameArabic = "الفَلَق",
             nameTranslit = "Al-Falaq",
-            nameAmharic = "አል-ፈselection (ጎህ)",
+            nameAmharic = "አል-ፈለቅ (ጎህ)",
             englishMeaning = "The Daybreak",
             versesCount = 5,
             revelationType = "መካ (Mecca)",
@@ -254,7 +254,7 @@ object QuranRepository {
         QuranSurah(110, "النَّصْر", "An-Nasr", "አን-ነስር", "The Divine Support", 3, "መዲና"),
         QuranSurah(111, "المَسَد", "Al-Masad", "አል-መሳድ", "The Palm Fiber", 5, "መካ"),
         QuranSurah(112, "الإِخْلَاص", "Al-Ikhlas", "አል-ኢኽላስ", "Sincerity", 4, "መካ"),
-        QuranSurah(113, "الفَلَق", "Al-Falaq", "አል-ፈselection", "The Daybreak", 5, "መካ"),
+        QuranSurah(113, "الفَلَق", "Al-Falaq", "አል-ፈለቅ", "The Daybreak", 5, "መካ"),
         QuranSurah(114, "النَّاس", "An-Nas", "አን-ናስ", "Mankind", 6, "መካ")
     )
 }
