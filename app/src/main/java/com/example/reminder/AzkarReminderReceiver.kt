@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.app.PendingIntent
+import com.example.MainActivity
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -29,11 +31,18 @@ class AzkarReminderReceiver : BroadcastReceiver() {
         }
 
         val title = if (kind == AzkarReminderScheduler.MORNING) "የጠዋት አዝካር" else "የማታ አዝካር"
+        val openAppIntent = PendingIntent.getActivity(
+            context, if (kind == AzkarReminderScheduler.MORNING) 7201 else 7202,
+            Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(context.applicationInfo.icon)
+            .setSmallIcon(com.example.R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText("የአዝካር ጊዜ ደርሷል። አዝካርህን አትርሳ።")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(openAppIntent)
             .setAutoCancel(true)
             .build()
 
