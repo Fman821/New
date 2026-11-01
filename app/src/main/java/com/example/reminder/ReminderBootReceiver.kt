@@ -6,7 +6,7 @@ import android.content.Intent
 
 class ReminderBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        if (intent.action !in setOf(Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED)) return
         val prefs = context.getSharedPreferences(AzkarReminderScheduler.PREFS, Context.MODE_PRIVATE)
         listOf(AzkarReminderScheduler.MORNING, AzkarReminderScheduler.EVENING).forEach { kind ->
             if (prefs.getBoolean("reminder_${kind}_enabled", false)) {
