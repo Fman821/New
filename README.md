@@ -21,9 +21,9 @@ A modern, beautifully crafted Android application built with **Kotlin** and **Je
   - Travel Adhkar (የጉዞ አዝካር - 6 items)
   - Other Daily Adhkar & Reminders (ሌሎች አዝካሮች - 12 items)
 - **Interactive Azkar Reader**:
-  - Complete Arabic text with full vowel marks (tashkeel).
-  - Accurate Amharic translation and Ge'ez phonetic transliteration.
-  - Per-item repetition tracking with audio recitation playback support.
+  - Arabic text with vowel marks where provided in the source content.
+  - Amharic translations; phonetic transliteration is included only where supplied in the content.
+  - Per-item repetition tracking; audio playback is available only for entries with an audio source.
   - One-tap text sharing and bookmarking (Favorites).
 - **Modern Digital Tasbih**:
   - Animated circular progress ring with custom targets (33, 99, 100, 1000).
@@ -88,6 +88,10 @@ app/src/main/
 - **Target SDK**: Android 16 / Android 14+ (minSdk 24)
 
 ---
+
+## 🚀 Maintained Android project
+
+The maintained Android application is the Kotlin/Jetpack Compose project under `app/`. The separate Flutter prototype is retained in the repository, but its automatic CI workflow is disabled to avoid building a second, different app.
 
 ## 🚀 How to Export and Push to GitHub
 
