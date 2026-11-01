@@ -109,6 +109,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val schedule = PrayerTimesCalculator.calculatePrayerTimes(city)
 
             val categories = repository.loadAzkarCategories()
+            repository.migrateFavoriteKeys(categories)
+            val migratedFavorites = repository.getFavorites()
             val duas = repository.loadDuas()
             val names = repository.loadNamesOfAllah()
 
@@ -124,7 +126,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 it.copy(
                     currentTheme = savedTheme,
                     arabicFontScale = fontScale,
-                    favorites = favorites,
+                    favorites = migratedFavorites,
                     tasbihCount = tasbihCount,
                     tasbihTarget = tasbihTarget,
                     tasbihTotal = tasbihTotal,
@@ -143,6 +145,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     isLoading = false
                 )
             }
+        }
+    }
+
+    fun onAppResumed() {
+        repository.checkAndApplyDailyReset()
+        val counts = repository.getAllItemCompletedCounts()
+        val categories = _uiState.value.categories
+        _uiState.update {
+            it.copy(
+                itemCompletedCounts = counts,
+                morningProgress = computeSessionProgress(categories.firstOrNull { c -> c.id == "morning" }, counts),
+                eveningProgress = computeSessionProgress(categories.firstOrNull { c -> c.id == "evening" }, counts)
+            )
         }
     }
 
@@ -167,14 +182,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (category == null) return null
         val total = category.items.size
         val completed = category.items.count { item ->
-            val count = counts["${category.id}_${item.id}"] ?: counts[item.id] ?: 0
+            val count = counts["${category.id}_${item.id}"] ?: 0
             count >= item.repeat
         }
         val remaining = (total - completed).coerceAtLeast(0)
         val fraction = if (total > 0) completed.toFloat() / total.toFloat() else 0f
         val isComplete = total > 0 && completed == total
         val isStarted = completed > 0 || category.items.any { item ->
-            val count = counts["${category.id}_${item.id}"] ?: counts[item.id] ?: 0
+            val count = counts["${category.id}_${item.id}"] ?: 0
             count > 0
         }
         val resumeIdx = repository.getResumeIndex(category.id).coerceIn(0, (total - 1).coerceAtLeast(0))
