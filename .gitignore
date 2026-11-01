@@ -69,9 +69,7 @@ debug.keystore.base64
 .Trashes
 ehthumbs.db
 Thumbs.db
--e 
 # AI Studio internals
 .aistudio/
 .build-outputs/
--e 
 *.zip
