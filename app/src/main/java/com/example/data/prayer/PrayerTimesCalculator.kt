@@ -5,6 +5,8 @@ import com.example.data.model.PrayerSchedule
 import com.example.data.model.QiblaInfo
 import java.util.Calendar
 import java.util.Locale
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlin.math.acos
 import kotlin.math.asin
 import kotlin.math.atan
@@ -23,6 +25,25 @@ object PrayerTimesCalculator {
 
     const val KAABA_LAT = 21.4225
     const val KAABA_LON = 39.8262
+
+    private val CITY_TIME_ZONES = mapOf(
+        "addis_ababa" to "Africa/Addis_Ababa",
+        "dire_dawa" to "Africa/Addis_Ababa",
+        "harar" to "Africa/Addis_Ababa",
+        "jimma" to "Africa/Addis_Ababa",
+        "dessie" to "Africa/Addis_Ababa",
+        "gondar" to "Africa/Addis_Ababa",
+        "mekelle" to "Africa/Addis_Ababa",
+        "hawassa" to "Africa/Addis_Ababa",
+        "mecca" to "Asia/Riyadh",
+        "medina" to "Asia/Riyadh",
+        "jerusalem" to "Asia/Jerusalem",
+        "cairo" to "Africa/Cairo",
+        "istanbul" to "Europe/Istanbul",
+        "dubai" to "Asia/Dubai",
+        "london" to "Europe/London",
+        "washington" to "America/New_York"
+    )
 
     val DEFAULT_CITIES = listOf(
         IslamicCity("addis_ababa", "Addis Ababa", "አዲስ አበባ", "ኢትዮጵያ (Ethiopia)", 9.03, 38.74, 3.0),
@@ -72,8 +93,14 @@ object PrayerTimesCalculator {
         val dec = rToD(asin(sin(dToR(e)) * sin(dToR(l))))
         val eqT = (q / 15.0) - fixHour(ra)
 
+        // Use the city's IANA time zone for the requested date, including DST.
+        val cityZone = CITY_TIME_ZONES[city.id]?.let { ZoneId.of(it) }
+        val timezoneHours = cityZone?.let { zone ->
+            LocalDate.of(year, month, day).atTime(12, 0).atZone(zone).offset.totalSeconds / 3600.0
+        } ?: city.timezoneHours
+
         // Solar Noon (Dhuhr)
-        val noon = fixHour(12.0 + city.timezoneHours - (city.longitude / 15.0) - eqT)
+        val noon = fixHour(12.0 + timezoneHours - (city.longitude / 15.0) - eqT)
 
         // Sun altitude angle for sunrise/sunset (accounting for refraction)
         val alphaSunrise = -0.833
