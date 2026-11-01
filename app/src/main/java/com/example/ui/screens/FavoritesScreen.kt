@@ -44,8 +44,8 @@ fun FavoritesScreen(
     itemCompletedCounts: Map<String, Int>,
     arabicFontScale: Float,
     audioState: AudioPlaybackState,
-    onIncrementCount: (String, Int) -> Unit,
-    onResetCount: (String) -> Unit,
+    onIncrementCount: (String, String, Int) -> Unit,
+    onResetCount: (String, String) -> Unit,
     onToggleFavorite: (String) -> Unit,
     onToggleAudio: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -53,8 +53,10 @@ fun FavoritesScreen(
     val islamicColors = LocalIslamicColors.current
 
     // Gather all favorited Azkar items
-    val allAzkarItems = categories.flatMap { it.items }
-    val favoritedAzkar = allAzkarItems.filter { favorites.contains(it.id) }
+    val favoritedAzkar = categories.flatMap { category ->
+        category.items.filter { favorites.contains("azkar_${category.id}_${it.id}") }
+            .map { category.id to it }
+    }
 
     // Gather all favorited Dua items
     val favoritedDuas = duas.filter { favorites.contains("dua_${it.id}") }.map { dua ->
@@ -69,7 +71,8 @@ fun FavoritesScreen(
         )
     }
 
-    val combinedFavorites = favoritedAzkar + favoritedDuas
+    val combinedFavorites = favoritedAzkar.map { (categoryId, item) -> Triple(categoryId, item, "azkar_${categoryId}_${item.id}") } +
+        favoritedDuas.map { item -> Triple("", item, item.id) }
 
     Column(
         modifier = modifier
@@ -137,17 +140,17 @@ fun FavoritesScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(combinedFavorites, key = { it.id }) { item ->
-                    val curCount = itemCompletedCounts[item.id] ?: 0
+                items(combinedFavorites, key = { it.third }) { (categoryId, item, favoriteKey) ->
+                    val curCount = if (categoryId.isNotEmpty()) itemCompletedCounts["${categoryId}_${item.id}"] ?: 0 else itemCompletedCounts[item.id] ?: 0
                     AzkarCard(
                         item = item,
                         completedCount = curCount,
                         isFavorite = true,
                         arabicFontScale = arabicFontScale,
                         audioState = audioState,
-                        onIncrementCount = { onIncrementCount(item.id, item.repeat) },
-                        onResetCount = { onResetCount(item.id) },
-                        onToggleFavorite = { onToggleFavorite(item.id) },
+                        onIncrementCount = { onIncrementCount(categoryId, item.id, item.repeat) },
+                        onResetCount = { onResetCount(categoryId, item.id) },
+                        onToggleFavorite = { onToggleFavorite(favoriteKey) },
                         onToggleAudio = onToggleAudio
                     )
                 }
