@@ -336,7 +336,7 @@ fun AzkarReaderScreen(
                     onResetCount(category.id, item.id)
                 },
                 onToggleFavorite = { item ->
-                    onToggleFavorite(item.id)
+                    onToggleFavorite("azkar_${category.id}_${item.id}")
                 },
                 onToggleAudio = { url ->
                     onToggleAudio(url)
@@ -367,7 +367,7 @@ fun AzkarReaderScreen(
                     onResetCount(category.id, item.id)
                 },
                 onToggleFavorite = { item ->
-                    onToggleFavorite(item.id)
+                    onToggleFavorite("azkar_${category.id}_${item.id}")
                 },
                 onToggleAudio = { url ->
                     onToggleAudio(url)
@@ -501,7 +501,7 @@ private fun GuidedAzkarView(
         ?: itemCompletedCounts[item.id]
         ?: 0
     val isItemDone = completedCount >= item.repeat
-    val isFavorite = favorites.contains(item.id)
+    val isFavorite = favorites.contains("azkar_${category.id}_${item.id}")
 
     // Debounced counting to prevent accidental double counting
     var lastTapTime by remember { mutableLongStateOf(0L) }
@@ -1162,7 +1162,7 @@ private fun ListAzkarView(
             val count = itemCompletedCounts["${category.id}_${item.id}"]
                 ?: itemCompletedCounts[item.id]
                 ?: 0
-            val isFavorite = favorites.contains(item.id)
+            val isFavorite = favorites.contains("azkar_${category.id}_${item.id}")
 
             AzkarCard(
                 item = item,
