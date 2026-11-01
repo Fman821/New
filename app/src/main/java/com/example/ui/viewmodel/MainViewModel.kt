@@ -346,6 +346,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update { it.copy(favorites = updatedFavs) }
     }
 
+    fun toggleAzkarFavorite(categoryId: String, itemId: String) {
+        repository.toggleFavorite(repository.favoriteKey(categoryId, itemId))
+        _uiState.update { it.copy(favorites = repository.getFavorites()) }
+    }
+
     fun toggleBookmarkDailyVerse() {
         toggleFavorite("daily_verse_albaqarah_152")
     }
