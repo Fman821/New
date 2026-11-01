@@ -89,6 +89,11 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onAppResumed()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -315,7 +320,7 @@ fun MainAppScreen(viewModel: MainViewModel) {
                     onIncrementCount = { catId, itemId, max -> viewModel.incrementItemCount(catId, itemId, max) },
                     onResetCount = { catId, itemId -> viewModel.resetItemCount(catId, itemId) },
                     onResetCategorySession = { catId -> viewModel.resetCategorySession(catId) },
-                    onToggleFavorite = { id -> viewModel.toggleFavorite(id) },
+                    onToggleFavorite = { id -> viewModel.toggleAzkarFavorite(uiState.selectedCategory?.id ?: "", id) },
                     onToggleAudio = { url -> viewModel.toggleAudio(url) },
                     onUpdateFontScale = { viewModel.setArabicFontScale(it) }
                 )
@@ -407,9 +412,13 @@ fun MainAppScreen(viewModel: MainViewModel) {
                                 itemCompletedCounts = uiState.itemCompletedCounts,
                                 arabicFontScale = uiState.arabicFontScale,
                                 audioState = uiState.audioState,
-                                onIncrementCount = { id, max -> viewModel.incrementItemCount(id, max) },
-                                onResetCount = { id -> viewModel.resetItemCount(id) },
-                                onToggleFavorite = { id -> viewModel.toggleFavorite(id) },
+                                onIncrementCount = { categoryId, id, max ->
+                                    if (categoryId.isNotEmpty()) viewModel.incrementItemCount(categoryId, id, max)
+                                },
+                                onResetCount = { categoryId, id ->
+                                    if (categoryId.isNotEmpty()) viewModel.resetItemCount(categoryId, id)
+                                },
+                                onToggleFavorite = { key -> viewModel.toggleFavorite(key) },
                                 onToggleAudio = { url -> viewModel.toggleAudio(url) }
                             )
                         }
