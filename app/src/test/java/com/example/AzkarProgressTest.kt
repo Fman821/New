@@ -25,6 +25,7 @@ class AzkarProgressTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
+        context.getSharedPreferences("nurul_azkar_prefs", Context.MODE_PRIVATE).edit().clear().commit()
         repository = AzkarRepository(context)
     }
 
@@ -88,18 +89,50 @@ class AzkarProgressTest {
     }
 
     @Test
-    fun testDailyResetPolicyPreservesFavorites() {
-        // Add favorite
-        repository.toggleFavorite("01")
-        assertTrue(repository.getFavorites().contains("01"))
-
-        // Add today count
+    fun testSameItemIdsRemainIndependentAcrossCategories() {
         repository.incrementItemCount("morning", "01", 3)
-        assertTrue(repository.getItemCompletedCount("morning", "01") > 0)
+        repository.incrementItemCount("morning", "01", 3)
+        repository.incrementItemCount("evening", "01", 3)
 
-        // Check daily reset on same day: should NOT reset
+        assertEquals(2, repository.getItemCompletedCount("morning", "01"))
+        assertEquals(1, repository.getItemCompletedCount("evening", "01"))
+
+        repository.resetCategoryProgress("morning", listOf("01"))
+        assertEquals(0, repository.getItemCompletedCount("morning", "01"))
+        assertEquals(1, repository.getItemCompletedCount("evening", "01"))
+    }
+
+    @Test
+    fun testLegacyFavoritesMigrateToCategoryScopedKeys() {
+        repository.toggleFavorite("01")
+        val categories = listOf(
+            AzkarCategory("morning", "Morning", "", "sun", items = listOf(
+                AzkarItem("01", "Morning item", "ذكر", "ዝክር")
+            )),
+            AzkarCategory("evening", "Evening", "", "moon", items = listOf(
+                AzkarItem("01", "Evening item", "ذكر", "ዝክር")
+            ))
+        )
+
+        repository.migrateFavoriteKeys(categories)
+        val favorites = repository.getFavorites()
+
+        assertTrue(favorites.contains("azkar_morning_01"))
+        assertTrue(favorites.contains("azkar_evening_01"))
+        assertFalse(favorites.contains("01"))
+
+        // Migration is one-time and preserves already migrated keys.
+        repository.migrateFavoriteKeys(emptyList())
+        assertTrue(repository.getFavorites().contains("azkar_morning_01"))
+    }
+
+    @Test
+    fun testDailyResetPolicyPreservesFavorites() {
+        repository.toggleFavorite("dua_01")
+        repository.incrementItemCount("morning", "01", 3)
         repository.checkAndApplyDailyReset()
+
         assertTrue(repository.getItemCompletedCount("morning", "01") > 0)
-        assertTrue(repository.getFavorites().contains("01"))
+        assertTrue(repository.getFavorites().contains("dua_01"))
     }
 }
