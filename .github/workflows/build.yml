@@ -1,14 +1,6 @@
 name: Flutter Build & Test
 
 on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
   workflow_dispatch:
 
 jobs:
@@ -36,7 +28,6 @@ jobs:
 
       - name: Generate Android Platform Files
         run: |
-          rm -rf android
           flutter create . --platforms=android --org com.aistudio.nurazkar
           echo "android.newDsl=false" >> android/gradle.properties
 
