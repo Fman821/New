@@ -241,19 +241,30 @@ class AzkarRepository(private val context: Context) {
 
     // ================= Favorites ================= //
 
-    fun getFavorites(): Set<String> {
-        return prefs.getStringSet(KEY_FAVORITES, emptySet()) ?: emptySet()
+    fun getFavorites(): Set<String> =
+        prefs.getStringSet(KEY_FAVORITES, emptySet())?.toSet() ?: emptySet()
+
+    fun favoriteKey(categoryId: String, itemId: String): String =
+        "azkar_${categoryId}_${itemId}"
+
+    fun migrateFavoriteKeys(categories: List<AzkarCategory>) {
+        val marker = "pref_favorites_category_keys_v1"
+        if (prefs.getBoolean(marker, false)) return
+        val current = getFavorites().toMutableSet()
+        val legacyIds = current.filter {
+            !it.startsWith("dua_") && !it.startsWith("daily_verse_") && !it.startsWith("azkar_")
+        }
+        legacyIds.forEach { oldId ->
+            categories.filter { category -> category.items.any { it.id == oldId } }
+                .forEach { category -> current.add(favoriteKey(category.id, oldId)) }
+            current.remove(oldId)
+        }
+        prefs.edit().putStringSet(KEY_FAVORITES, current).putBoolean(marker, true).apply()
     }
 
     fun toggleFavorite(itemId: String): Boolean {
         val current = getFavorites().toMutableSet()
-        val isFav = if (current.contains(itemId)) {
-            current.remove(itemId)
-            false
-        } else {
-            current.add(itemId)
-            true
-        }
+        val isFav = if (current.remove(itemId)) false else { current.add(itemId); true }
         prefs.edit().putStringSet(KEY_FAVORITES, current).apply()
         return isFav
     }
@@ -315,13 +326,8 @@ class AzkarRepository(private val context: Context) {
         return prefs.getInt(KEY_COMPLETED_AZKAR_PREFIX + uniqueKey, 0)
     }
 
-    fun getItemCompletedCount(categoryId: String, itemId: String): Int {
-        val compositeKey = "${categoryId}_$itemId"
-        if (prefs.contains(KEY_COMPLETED_AZKAR_PREFIX + compositeKey)) {
-            return prefs.getInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, 0)
-        }
-        return prefs.getInt(KEY_COMPLETED_AZKAR_PREFIX + itemId, 0)
-    }
+    fun getItemCompletedCount(categoryId: String, itemId: String): Int =
+        getItemCompletedCount("${categoryId}_${itemId}")
 
     fun incrementItemCount(uniqueKey: String, maxRepeat: Int): Int {
         val current = getItemCompletedCount(uniqueKey)
@@ -334,10 +340,7 @@ class AzkarRepository(private val context: Context) {
         val current = getItemCompletedCount(categoryId, itemId)
         val next = if (current < maxRepeat) current + 1 else maxRepeat
         val compositeKey = "${categoryId}_$itemId"
-        prefs.edit()
-            .putInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, next)
-            .putInt(KEY_COMPLETED_AZKAR_PREFIX + itemId, next)
-            .apply()
+        prefs.edit().putInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, next).apply()
         return next
     }
 
@@ -347,17 +350,13 @@ class AzkarRepository(private val context: Context) {
 
     fun resetItemCount(categoryId: String, itemId: String) {
         val compositeKey = "${categoryId}_$itemId"
-        prefs.edit()
-            .putInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, 0)
-            .putInt(KEY_COMPLETED_AZKAR_PREFIX + itemId, 0)
-            .apply()
+        prefs.edit().putInt(KEY_COMPLETED_AZKAR_PREFIX + compositeKey, 0).apply()
     }
 
     fun resetCategoryProgress(categoryId: String, itemIds: List<String>) {
         val editor = prefs.edit()
         for (id in itemIds) {
             editor.remove(KEY_COMPLETED_AZKAR_PREFIX + "${categoryId}_$id")
-            editor.remove(KEY_COMPLETED_AZKAR_PREFIX + id)
         }
         editor.putInt(KEY_RESUME_INDEX_PREFIX + categoryId, 0)
         editor.apply()
