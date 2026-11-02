@@ -5,8 +5,7 @@ import com.example.data.model.PrayerSchedule
 import com.example.data.model.QiblaInfo
 import java.util.Calendar
 import java.util.Locale
-import java.time.LocalDate
-import java.time.ZoneId
+import java.util.TimeZone
 import kotlin.math.acos
 import kotlin.math.asin
 import kotlin.math.atan
@@ -94,9 +93,12 @@ object PrayerTimesCalculator {
         val eqT = (q / 15.0) - fixHour(ra)
 
         // Use the city's IANA time zone for the requested date, including DST.
-        val cityZone = CITY_TIME_ZONES[city.id]?.let { ZoneId.of(it) }
-        val timezoneHours = cityZone?.let { zone ->
-            LocalDate.of(year, month, day).atTime(12, 0).atZone(zone).offset.totalSeconds / 3600.0
+        val timezoneHours = CITY_TIME_ZONES[city.id]?.let { zoneId ->
+            val localCalendar = Calendar.getInstance(TimeZone.getTimeZone(zoneId)).apply {
+                clear()
+                set(year, month - 1, day, 12, 0, 0)
+            }
+            (localCalendar.timeZone.getOffset(localCalendar.timeInMillis) / 3_600_000.0)
         } ?: city.timezoneHours
 
         // Solar Noon (Dhuhr)
