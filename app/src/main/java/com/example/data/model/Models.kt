@@ -159,5 +159,6 @@ enum class AppThemeMode(val titleAm: String, val descAm: String) {
     DARK_EMERALD_NEON("የሌሊት ጽሞና (Sacred Night)", "ጥልቅ ኤመራልድ ከሚያበራ ወርቅ ጋር"),
     MIDNIGHT_OTTOMAN("የኦቶማን ሰማያዊ (Ottoman)", "ጥልቅ ሰማያዊ ከመዳብና ሮዝ ወርቅ ጋር"),
     GLASSMORPHISM_3D("ዘመናዊ ግላስ (Glass)", "የብርጭቆ ዲዛይን በኤመራልድና ወርቅ ፍንጣቂ"),
-    MASJID_ARCHITECTURE("የመስጊድ ቅስት (Masjid)", "የመስጊዶች ቅስት አርክቴክቸርና የተረጋጋ አረንጓዴ")
+    MASJID_ARCHITECTURE("የመስጊድ ቅስት (Masjid)", "የመስጊዶች ቅስት አርክቴክቸርና የተረጋጋ አረንጓዴ"),
+    SYSTEM_DEFAULT("የስልኩን ገጽታ ተከተል", "የስልክዎን ቀንና ሌሊት ገጽታ በራስ-ሰር ይከተላል")
 }
