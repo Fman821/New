@@ -46,12 +46,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
+import com.example.BuildConfig
 import com.example.ui.components.IslamicGeometricDivider
 import com.example.ui.theme.DeepEmerald
 import com.example.ui.theme.LocalIslamicColors
@@ -62,6 +64,9 @@ fun AboutScreen(
     onBack: () -> Unit
 ) {
     val islamicColors = LocalIslamicColors.current
+    val context = LocalContext.current
+    val versionName = runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: BuildConfig.VERSION_NAME
+    val versionCode = BuildConfig.VERSION_CODE
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -310,7 +315,7 @@ fun AboutScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "1.0 (Build 1)",
+                            text = "$versionName (Build $versionCode)",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = islamicColors.goldAccent
