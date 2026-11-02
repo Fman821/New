@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import android.content.Intent
+import android.view.WindowManager
 import android.os.SystemClock
 import android.speech.tts.TextToSpeech
 import androidx.activity.compose.BackHandler
@@ -77,6 +78,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,6 +89,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
@@ -136,12 +139,18 @@ fun AzkarReaderScreen(
 
     val islamicColors = LocalIslamicColors.current
     val context = LocalContext.current
+    val hostView = LocalView.current
+    DisposableEffect(hostView) {
+        val window = (hostView.context as? android.app.Activity)?.window
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose { window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+    }
     val haptic = LocalHapticFeedback.current
 
     var showFontDialog by remember { mutableStateOf(false) }
     var showResetSessionDialog by remember { mutableStateOf(false) }
     var showCompletionModal by remember { mutableStateOf(false) }
-    var listSearchQuery by remember { mutableStateOf("") }
+    var listSearchQuery by rememberSaveable(category.id) { mutableStateOf("") }
 
     val items = category.items
     val totalCount = items.size
