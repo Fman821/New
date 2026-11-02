@@ -87,6 +87,7 @@ fun ThemeSelectorDialog(
                     val isSelected = mode == currentTheme
 
                     val dotColors = when (mode) {
+                        AppThemeMode.SYSTEM_DEFAULT -> Pair(SacredLightBg, SacredLightPrimary)
                         AppThemeMode.SACRED_LIGHT -> Pair(SacredLightBg, SacredLightPrimary)
                         AppThemeMode.DARK_EMERALD_NEON -> Pair(com.example.ui.theme.SacredNightBg, com.example.ui.theme.SacredNightPrimary)
                         AppThemeMode.MIDNIGHT_OTTOMAN -> Pair(OttomanBg, OttomanPrimary)
