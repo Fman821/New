@@ -54,6 +54,7 @@ class PrayerTimesCalculatorTest {
         val winter = PrayerTimesCalculator.calculatePrayerTimes(addis, calendar(2026, 1, 15))
         val summer = PrayerTimesCalculator.calculatePrayerTimes(addis, calendar(2026, 7, 15))
 
-        assertEquals(minutes(winter.dhuhr), minutes(summer.dhuhr))
+        val difference = kotlin.math.abs(minutes(winter.dhuhr) - minutes(summer.dhuhr))
+        assertTrue("Ethiopia has no DST; only seasonal solar variation is expected", difference <= 15)
     }
 }
