@@ -3,6 +3,7 @@ package com.example.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -123,7 +124,9 @@ fun AzkarAppTheme(
     themeMode: AppThemeMode = AppThemeMode.SACRED_LIGHT,
     content: @Composable () -> Unit
 ) {
+    val systemDark = isSystemInDarkTheme()
     val colorScheme = when (themeMode) {
+        AppThemeMode.SYSTEM_DEFAULT -> if (systemDark) SacredNightColorScheme else SacredLightColorScheme
         AppThemeMode.SACRED_LIGHT -> SacredLightColorScheme
         AppThemeMode.DARK_EMERALD_NEON -> SacredNightColorScheme
         AppThemeMode.MIDNIGHT_OTTOMAN -> OttomanColorScheme
@@ -132,11 +135,39 @@ fun AzkarAppTheme(
     }
 
     val isDark = when (themeMode) {
+        AppThemeMode.SYSTEM_DEFAULT -> systemDark
         AppThemeMode.SACRED_LIGHT, AppThemeMode.MASJID_ARCHITECTURE -> false
         else -> true
     }
 
     val islamicColors = when (themeMode) {
+        AppThemeMode.SYSTEM_DEFAULT -> if (systemDark) {
+            ExtendedIslamicColors(
+                themeMode = themeMode,
+                cardBorder = Color(0x33F2D99A),
+                goldAccent = SoftGold,
+                secondaryGold = ChampagneGold,
+                arabicCalligraphyColor = SoftGold,
+                primaryText = Color(0xFFFAF7F0),
+                subtextColor = Color(0xFFA6BAAF),
+                cardBg = DarkForestGreen,
+                surfaceHighlight = DarkSurfaceVariant,
+                isDark = true
+            )
+        } else {
+            ExtendedIslamicColors(
+                themeMode = themeMode,
+                cardBorder = SubtleBorder,
+                goldAccent = ChampagneGold,
+                secondaryGold = SoftGold,
+                arabicCalligraphyColor = ArabicEmerald,
+                primaryText = PrimaryTextDark,
+                subtextColor = SecondaryTextDark,
+                cardBg = PureWhite,
+                surfaceHighlight = LightSurfaceVariant,
+                isDark = false
+            )
+        }
         AppThemeMode.SACRED_LIGHT -> ExtendedIslamicColors(
             themeMode = themeMode,
             cardBorder = SubtleBorder,
